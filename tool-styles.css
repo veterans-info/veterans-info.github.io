@@ -1,4 +1,22 @@
 /* Tool-specific styles */
+
+/* Define CSS custom properties at the root */
+:root {
+    --primary-color: #003366;
+    --success-color: #28a745;
+    --error-color: #dc3545;
+    --warning-color: #ffc107;
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8f9fa;
+    --bg-tertiary: #e9ecef;
+    --text-secondary: #6c757d;
+    --border-color: #dee2e6;
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --transition-fast: 0.15s ease;
+    --transition-normal: 0.3s ease;
+}
+
 .tool-container {
     max-width: 800px;
     margin: 0 auto;
@@ -104,7 +122,7 @@
     margin-bottom: 2rem;
 }
 
-.tool-result.eligibile {
+.tool-result.eligible { /* Fixed typo: was "eligibile" */
     border: 2px solid var(--success-color);
     background: #d4edda;
 }
