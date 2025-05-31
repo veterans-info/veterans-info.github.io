@@ -4,12 +4,127 @@
 
     // DOM Content Loaded
     document.addEventListener('DOMContentLoaded', function () {
+        loadHeader();
         initializeYear();
         initializeLastUpdated();
         initializeNavigation();
         initializeAccessibility();
         initializeAnalytics();
     });
+
+    // Load header HTML
+    function loadHeader() {
+        // Only load header if it doesn't already exist (to avoid duplicate loading)
+        if (!document.querySelector('header[role="banner"]')) {
+            fetch('/header.html')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Header file not found');
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    // Insert header after skip link
+                    const skipLink = document.querySelector('.skip-link');
+                    if (skipLink) {
+                        skipLink.insertAdjacentHTML('afterend', data);
+                    } else {
+                        // Fallback: insert at beginning of body
+                        document.body.insertAdjacentHTML('afterbegin', data);
+                    }
+                    
+                    // Set active page indicator after header is loaded
+                    setActiveNavLink();
+                    
+                    // Initialize dropdown functionality after header is loaded
+                    initializeDropdowns();
+                })
+                .catch(error => {
+                    console.error('Error loading header:', error);
+                    // Graceful fallback - site still works without dynamic header
+                });
+        } else {
+            // Header already exists, just initialize navigation
+            setActiveNavLink();
+            initializeDropdowns();
+        }
+    }
+
+    // Set active navigation link
+    function setActiveNavLink() {
+        const currentPath = window.location.pathname;
+        const navLinks = document.querySelectorAll('nav a');
+        
+        navLinks.forEach(link => {
+            // Remove any existing aria-current attributes
+            link.removeAttribute('aria-current');
+            link.classList.remove('active');
+            
+            // Check if this link matches current page
+            if (link.getAttribute('href') === currentPath || 
+                (currentPath === '/' && link.getAttribute('href') === '/') ||
+                (currentPath === '/index.html' && link.getAttribute('href') === '/')) {
+                link.setAttribute('aria-current', 'page');
+                link.classList.add('active');
+            }
+        });
+    }
+
+    // Initialize dropdown menus
+    function initializeDropdowns() {
+        const dropdowns = document.querySelectorAll('.dropdown > a');
+        
+        dropdowns.forEach(dropdown => {
+            dropdown.addEventListener('click', function(e) {
+                e.preventDefault();
+                const expanded = this.getAttribute('aria-expanded') === 'true';
+                
+                // Close all other dropdowns
+                dropdowns.forEach(otherDropdown => {
+                    if (otherDropdown !== this) {
+                        otherDropdown.setAttribute('aria-expanded', 'false');
+                        otherDropdown.parentElement.classList.remove('open');
+                    }
+                });
+                
+                // Toggle current dropdown
+                this.setAttribute('aria-expanded', !expanded);
+                this.parentElement.classList.toggle('open');
+            });
+
+            // Handle keyboard navigation
+            dropdown.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    this.click();
+                } else if (e.key === 'Escape') {
+                    this.setAttribute('aria-expanded', 'false');
+                    this.parentElement.classList.remove('open');
+                    this.blur();
+                }
+            });
+        });
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.dropdown')) {
+                dropdowns.forEach(dropdown => {
+                    dropdown.setAttribute('aria-expanded', 'false');
+                    dropdown.parentElement.classList.remove('open');
+                });
+            }
+        });
+
+        // Close dropdowns on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                dropdowns.forEach(dropdown => {
+                    dropdown.setAttribute('aria-expanded', 'false');
+                    dropdown.parentElement.classList.remove('open');
+                });
+            }
+        });
+    }
 
     // Update current year
     function initializeYear() {
@@ -48,21 +163,24 @@
             });
         }
 
-        // Dropdown keyboard navigation
-        const dropdowns = document.querySelectorAll('.dropdown');
-        dropdowns.forEach(dropdown => {
-            const trigger = dropdown.querySelector('a');
-            const content = dropdown.querySelector('.dropdown-content');
-
-            if (trigger && content) {
-                trigger.addEventListener('click', function (e) {
-                    if (window.innerWidth <= 768) {
-                        e.preventDefault();
-                        const expanded = this.getAttribute('aria-expanded') === 'true';
-                        this.setAttribute('aria-expanded', !expanded);
-                    }
-                });
-            }
+        // Smooth scrolling for anchor links
+        const anchorLinks = document.querySelectorAll('a[href^="#"]');
+        anchorLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                const targetId = this.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+                
+                if (targetElement) {
+                    e.preventDefault();
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                    
+                    // Focus the target element for accessibility
+                    targetElement.focus();
+                }
+            });
         });
     }
 
@@ -74,7 +192,21 @@
         announcer.setAttribute('aria-live', 'polite');
         announcer.setAttribute('aria-atomic', 'true');
         announcer.className = 'sr-only';
+        announcer.id = 'live-announcer';
         document.body.appendChild(announcer);
+
+        // Add skip to main content functionality
+        const skipLink = document.querySelector('.skip-link');
+        if (skipLink) {
+            skipLink.addEventListener('click', function(e) {
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    e.preventDefault();
+                    target.focus();
+                    target.scrollIntoView();
+                }
+            });
+        }
 
         // Add keyboard navigation hints
         const interactiveElements = document.querySelectorAll('a, button, input, select, textarea');
@@ -86,6 +218,14 @@
                 }
             }
         });
+
+        // Announce page load completion
+        setTimeout(() => {
+            announcer.textContent = 'Page loaded successfully';
+            setTimeout(() => {
+                announcer.textContent = '';
+            }, 1000);
+        }, 500);
     }
 
     // Initialize analytics (placeholder)
@@ -96,6 +236,20 @@
             // Example: Plausible, Umami, or similar privacy-respecting analytics
         }
     }
+
+    // Utility function: Announce message to screen readers
+    function announceToScreenReader(message) {
+        const announcer = document.getElementById('live-announcer');
+        if (announcer) {
+            announcer.textContent = message;
+            setTimeout(() => {
+                announcer.textContent = '';
+            }, 1000);
+        }
+    }
+
+    // Make utility function globally available
+    window.announceToScreenReader = announceToScreenReader;
 
     // Utility: Screen reader only class
     const srOnlyStyle = document.createElement('style');
@@ -110,6 +264,14 @@
             clip: rect(0, 0, 0, 0);
             white-space: nowrap;
             border-width: 0;
+        }
+        
+        .active {
+            font-weight: bold;
+        }
+        
+        .dropdown.open .dropdown-content {
+            display: block;
         }
     `;
     document.head.appendChild(srOnlyStyle);
