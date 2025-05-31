@@ -2,223 +2,223 @@
 
 /* Reset and Base Styles (Example - you might have more here) */
 body {
-font-family: sans-serif;
-line-height: 1.6;
-margin: 0;
-padding: 0;
-background-color: #f4f4f4;
-color: #333;
+    font-family: sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    color: #333;
 }
 
 /* Skip Link */
 .skip-link {
-position: absolute;
-top: -40px;
-left: 0;
-background: #333;
-color: white;
-padding: 8px;
-z-index: 100;
-transition: top 0.3s;
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: #333;
+    color: white;
+    padding: 8px;
+    z-index: 100;
+    transition: top 0.3s;
 }
 
 .skip-link:focus {
-top: 0;
+    top: 0;
 }
 
-/* Main Content Area /
+/* Main Content Area */
 main {
-display: block; / Explicitly set, though default for main /
-max-width: 960px;
-margin-left: auto; / For horizontal centering /
-margin-right: auto; / For horizontal centering */
-margin-top: 20px;
-margin-bottom: 20px;
-padding: 20px;
-background-color: #fff;
-box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: block; /* Explicitly set, though default for main */
+    max-width: 960px;
+    margin-left: auto; /* For horizontal centering */
+    margin-right: auto; /* For horizontal centering */
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 article,
 section {
-margin-bottom: 20px;
+    margin-bottom: 20px;
 }
 
 h1, h2, h3 {
-color: #003366; /* Example dark blue */
+    color: #003366; /* Example dark blue */
 }
 
 h1 {
-font-size: 2em;
-border-bottom: 2px solid #eee;
-padding-bottom: 0.3em;
+    font-size: 2em;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 0.3em;
 }
 
 h2 {
-font-size: 1.5em;
-margin-top: 1.5em;
+    font-size: 1.5em;
+    margin-top: 1.5em;
 }
 
 h3 {
-font-size: 1.2em;
+    font-size: 1.2em;
 }
 
 p, li {
-margin-bottom: 0.8em;
+    margin-bottom: 0.8em;
 }
 
 ul, ol {
-padding-left: 20px;
+    padding-left: 20px;
 }
 
 a {
-color: #0056b3; /* Standard link blue */
-text-decoration: none;
+    color: #0056b3; /* Standard link blue */
+    text-decoration: none;
 }
 
 a:hover, a:focus {
-text-decoration: underline;
-color: #003366;
+    text-decoration: underline;
+    color: #003366;
 }
 
 time {
-font-style: italic;
-color: #555;
+    font-style: italic;
+    color: #555;
 }
 
-/* Hero Section (index.html) /
+/* Hero Section (index.html) */
 .hero {
-text-align: center;
-padding: 40px 20px;
-background-color: #003366; / Dark blue background */
-color: #fff;
-border-radius: 8px;
+    text-align: center;
+    padding: 40px 20px;
+    background-color: #003366; /* Dark blue background */
+    color: #fff;
+    border-radius: 8px;
 }
 
 .hero h2 {
-color: #fff;
-margin-top: 0;
+    color: #fff;
+    margin-top: 0;
 }
 
 .cta-buttons {
-margin-top: 20px;
+    margin-top: 20px;
 }
 
 .btn {
-display: inline-block;
-padding: 10px 20px;
-margin: 5px;
-border-radius: 5px;
-text-decoration: none;
-font-weight: bold;
-transition: background-color 0.3s ease;
-cursor: pointer; /* Added for better UX */
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 5px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    cursor: pointer; /* Added for better UX */
 }
 
 .btn-primary {
-background-color: #ff9900; /* Orange */
-color: #003366;
+    background-color: #ff9900; /* Orange */
+    color: #003366;
 }
 
 .btn-primary:hover, .btn-primary:focus {
-background-color: #e68a00;
-color: #003366;
-text-decoration: none;
+    background-color: #e68a00;
+    color: #003366;
+    text-decoration: none;
 }
 
 .btn-secondary {
-background-color: #e9ecef; /* Light gray */
-color: #003366;
-border: 1px solid #003366;
+    background-color: #e9ecef; /* Light gray */
+    color: #003366;
+    border: 1px solid #003366;
 }
 
 .btn-secondary:hover, .btn-secondary:focus {
-background-color: #ced4da;
-color: #003366;
-text-decoration: none;
+    background-color: #ced4da;
+    color: #003366;
+    text-decoration: none;
 }
 
 /* Features Section (index.html) */
 .features {
-margin-top: 30px;
+    margin-top: 30px;
 }
 
 .feature-grid {
-display: grid;
-grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-gap: 20px;
-margin-top: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
 }
 
 .feature-card {
-background-color: #f9f9f9;
-padding: 20px;
-border: 1px solid #ddd;
-border-radius: 8px;
-box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
+    background-color: #f9f9f9;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
 }
 
 .feature-card h3 {
-margin-top: 0;
+    margin-top: 0;
 }
 
 .feature-card a {
-display: inline-block;
-margin-top: 10px;
-font-weight: bold;
+    display: inline-block;
+    margin-top: 10px;
+    font-weight: bold;
 }
 
-/* Disclaimer Section (index.html & others, incl. tool disclaimer) /
-.disclaimer, .tool-disclaimer { / Added .tool-disclaimer to share styles /
-background-color: #fff3cd; / Light yellow /
-color: #856404; / Dark yellow text /
-padding: 15px;
-border: 1px solid #ffeeba;
-border-radius: 5px;
-margin-top: 30px;
-margin-bottom: 20px; / Added for spacing */
+/* Disclaimer Section (index.html & others, incl. tool disclaimer) */
+.disclaimer, .tool-disclaimer { /* Added .tool-disclaimer to share styles */
+    background-color: #fff3cd; /* Light yellow */
+    color: #856404; /* Dark yellow text */
+    padding: 15px;
+    border: 1px solid #ffeeba;
+    border-radius: 5px;
+    margin-top: 30px;
+    margin-bottom: 20px; /* Added for spacing */
 }
 
 .disclaimer h2, .tool-disclaimer h2 { /* Added .tool-disclaimer to share styles */
-color: #856404;
-margin-top: 0;
-font-size: 1.2em;
+    color: #856404;
+    margin-top: 0;
+    font-size: 1.2em;
 }
 
 /* --- Tool Specific Supplementary Styles --- */
 
 /* Help text within questions */
 .help-text {
-font-size: 0.9em;
-font-style: italic;
-color: #555;
-margin-top: 5px;
-margin-bottom: 15px;
+    font-size: 0.9em;
+    font-style: italic;
+    color: #555;
+    margin-top: 5px;
+    margin-bottom: 15px;
 }
 
 /* Base style for the result area (referenced by tool-styles.css but adding padding here) */
 .tool-result {
-padding: 20px;
-border-radius: 5px;
-margin-top: 20px;
-border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 5px;
+    margin-top: 20px;
+    border: 1px solid #ddd;
 }
 
-/* Result type specific styles /
+/* Result type specific styles */
 .tool-result.info {
-background-color: #e7f3fe; / Light blue /
-border-left: 5px solid #2196F3; / Blue accent */
-color: #0d47a1;
+    background-color: #e7f3fe; /* Light blue */
+    border-left: 5px solid #2196F3; /* Blue accent */
+    color: #0d47a1;
 }
 .tool-result.info h2 { color: #1976D2; }
 
 .tool-result.eligible-5-point,
 .tool-result.eligible-10-point,
 .tool-result.eligible-10-point-derivative,
-.tool-result.eligible-10-point-cps { /* Grouping eligible types /
-background-color: #e8f5e9; / Light green /
-border-left: 5px solid #4CAF50; / Green accent */
-color: #1b5e20;
+.tool-result.eligible-10-point-cps { /* Grouping eligible types */
+    background-color: #e8f5e9; /* Light green */
+    border-left: 5px solid #4CAF50; /* Green accent */
+    color: #1b5e20;
 }
 .tool-result.eligible-5-point h2,
 .tool-result.eligible-10-point h2,
@@ -226,67 +226,67 @@ color: #1b5e20;
 .tool-result.eligible-10-point-cps h2 { color: #388E3C; }
 
 .tool-result.not-eligible {
-background-color: #ffebee; /* Light red/pink /
-border-left: 5px solid #f44336; / Red accent */
-color: #b71c1c;
+    background-color: #ffebee; /* Light red/pink */
+    border-left: 5px solid #f44336; /* Red accent */
+    color: #b71c1c;
 }
 .tool-result.not-eligible h2 { color: #D32F2F; }
 
 .tool-result.complex {
-background-color: #fffde7; /* Light yellow (similar to disclaimer) /
-border-left: 5px solid #FFC107; / Amber accent /
-color: #795548; / Brownish text for contrast */
+    background-color: #fffde7; /* Light yellow (similar to disclaimer) */
+    border-left: 5px solid #FFC107; /* Amber accent */
+    color: #795548; /* Brownish text for contrast */
 }
 .tool-result.complex h2 { color: #FFA000; }
 
-/* Sections within the result (documents, details, links) /
+/* Sections within the result (documents, details, links) */
 .result-documents,
 .result-details,
 .result-links {
-margin-top: 15px;
-padding-top: 10px;
-border-top: 1px dashed #ccc; / Separator if multiple sections appear */
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px dashed #ccc; /* Separator if multiple sections appear */
 }
 
-.result-documents:first-child, /* If it's the very first detail section /
+.result-documents:first-child, /* If it's the very first detail section */
 .result-details:first-child,
 .result-links:first-child {
-margin-top: 10px; / Slightly less margin if it's the first one */
-padding-top: 0;
-border-top: none;
+    margin-top: 10px; /* Slightly less margin if it's the first one */
+    padding-top: 0;
+    border-top: none;
 }
 
 .result-documents h3,
 .result-details h3,
 .result-links h3 {
-font-size: 1.1em;
-margin-bottom: 0.5em;
-/* Color will be inherited from the parent .tool-result.* type */
+    font-size: 1.1em;
+    margin-bottom: 0.5em;
+    /* Color will be inherited from the parent .tool-result.* type */
 }
 
 .result-documents ul,
 .result-details ul,
 .result-links ul {
-list-style-type: disc;
-padding-left: 20px;
-margin-bottom: 0;
+    list-style-type: disc;
+    padding-left: 20px;
+    margin-bottom: 0;
 }
 
 .result-documents li,
 .result-details li,
 .result-links li {
-margin-bottom: 0.5em;
+    margin-bottom: 0.5em;
 }
 
-/* Error message styling /
+/* Error message styling */
 .error-message {
-color: #D32F2F; / Red for errors */
-background-color: #ffebee;
-border: 1px solid #D32F2F;
-padding: 10px;
-border-radius: 4px;
-margin-top: 10px;
-font-weight: bold;
+    color: #D32F2F; /* Red for errors */
+    background-color: #ffebee;
+    border: 1px solid #D32F2F;
+    padding: 10px;
+    border-radius: 4px;
+    margin-top: 10px;
+    font-weight: bold;
 }
 
 /* --- End of Tool Specific Supplementary Styles --- */
@@ -298,11 +298,11 @@ The !important flag helps ensure this rule takes precedence,
 especially when toggled via JavaScript.
 */
 .hidden {
-display: none !important;
+    display: none !important;
 }
 
-/* If tool-styles.css has specific styles for .btn, .btn-primary, .btn-secondary, /
-/ ensure they are loaded after this or use more specific selectors in tool-styles.css /
-/ For example, in tool-styles.css: /
-/ .tool-container .btn { ... } /
-/ .answer-option { ... } (likely already in tool-styles.css) */
+/* If tool-styles.css has specific styles for .btn, .btn-primary, .btn-secondary, */
+/* ensure they are loaded after this or use more specific selectors in tool-styles.css */
+/* For example, in tool-styles.css: */
+/* .tool-container .btn { ... } */
+/* .answer-option { ... } (likely already in tool-styles.css) */
