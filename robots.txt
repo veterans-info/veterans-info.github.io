@@ -1,1 +1,4 @@
-
+User-agent: *
+Disallow: /tool.html
+Crawl-delay: 1
+Sitemap: https://veterans-info.github.io/sitemap.xml
