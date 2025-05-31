@@ -32,10 +32,10 @@
                         // Fallback: insert at beginning of body
                         document.body.insertAdjacentHTML('afterbegin', data);
                     }
-                    
+
                     // Set active page indicator after header is loaded
                     setActiveNavLink();
-                    
+
                     // Initialize dropdown functionality after header is loaded
                     initializeDropdowns();
                 })
@@ -54,14 +54,14 @@
     function setActiveNavLink() {
         const currentPath = window.location.pathname;
         const navLinks = document.querySelectorAll('nav a');
-        
+
         navLinks.forEach(link => {
             // Remove any existing aria-current attributes
             link.removeAttribute('aria-current');
             link.classList.remove('active');
-            
+
             // Check if this link matches current page
-            if (link.getAttribute('href') === currentPath || 
+            if (link.getAttribute('href') === currentPath ||
                 (currentPath === '/' && link.getAttribute('href') === '/') ||
                 (currentPath === '/index.html' && link.getAttribute('href') === '/')) {
                 link.setAttribute('aria-current', 'page');
@@ -70,15 +70,42 @@
         });
     }
 
+    // Set footer
+    function loadFooter() {
+        return fetch('/footer.html') // Ensure footer.html is at the root
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Footer file not found');
+                }
+                return response.text();
+            })
+            .then(data => {
+                // Assuming you want to inject it right before the closing </body> tag
+                // or into a specific placeholder div if you prefer.
+                // For simplicity, let's append it to the body.
+                // If you have a main script tag as the last element, inject before it.
+                const scripts = document.body.querySelectorAll('script');
+                const lastScript = scripts[scripts.length - 1];
+                if (lastScript) {
+                    lastScript.insertAdjacentHTML('beforebegin', data);
+                } else {
+                    document.body.insertAdjacentHTML('beforeend', data);
+                }
+            })
+            .catch(error => {
+                console.error('Error loading footer:', error);
+            });
+    }
+
     // Initialize dropdown menus
     function initializeDropdowns() {
         const dropdowns = document.querySelectorAll('.dropdown > a');
-        
+
         dropdowns.forEach(dropdown => {
-            dropdown.addEventListener('click', function(e) {
+            dropdown.addEventListener('click', function (e) {
                 e.preventDefault();
                 const expanded = this.getAttribute('aria-expanded') === 'true';
-                
+
                 // Close all other dropdowns
                 dropdowns.forEach(otherDropdown => {
                     if (otherDropdown !== this) {
@@ -86,14 +113,14 @@
                         otherDropdown.parentElement.classList.remove('open');
                     }
                 });
-                
+
                 // Toggle current dropdown
                 this.setAttribute('aria-expanded', !expanded);
                 this.parentElement.classList.toggle('open');
             });
 
             // Handle keyboard navigation
-            dropdown.addEventListener('keydown', function(e) {
+            dropdown.addEventListener('keydown', function (e) {
                 if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
                     this.click();
@@ -106,7 +133,7 @@
         });
 
         // Close dropdowns when clicking outside
-        document.addEventListener('click', function(e) {
+        document.addEventListener('click', function (e) {
             if (!e.target.closest('.dropdown')) {
                 dropdowns.forEach(dropdown => {
                     dropdown.setAttribute('aria-expanded', 'false');
@@ -116,7 +143,7 @@
         });
 
         // Close dropdowns on escape key
-        document.addEventListener('keydown', function(e) {
+        document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape') {
                 dropdowns.forEach(dropdown => {
                     dropdown.setAttribute('aria-expanded', 'false');
@@ -166,17 +193,17 @@
         // Smooth scrolling for anchor links
         const anchorLinks = document.querySelectorAll('a[href^="#"]');
         anchorLinks.forEach(link => {
-            link.addEventListener('click', function(e) {
+            link.addEventListener('click', function (e) {
                 const targetId = this.getAttribute('href').substring(1);
                 const targetElement = document.getElementById(targetId);
-                
+
                 if (targetElement) {
                     e.preventDefault();
                     targetElement.scrollIntoView({
                         behavior: 'smooth',
                         block: 'start'
                     });
-                    
+
                     // Focus the target element for accessibility
                     targetElement.focus();
                 }
@@ -198,7 +225,7 @@
         // Add skip to main content functionality
         const skipLink = document.querySelector('.skip-link');
         if (skipLink) {
-            skipLink.addEventListener('click', function(e) {
+            skipLink.addEventListener('click', function (e) {
                 const target = document.querySelector(this.getAttribute('href'));
                 if (target) {
                     e.preventDefault();
