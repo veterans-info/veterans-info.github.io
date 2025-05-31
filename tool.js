@@ -348,6 +348,9 @@
         }
         
         // Additional nodes would continue here...
+        // Example: ACTIVE_DUTY_STATUS, RETIREMENT_TYPE, RESERVE_STATUS,
+        // ENTRY_LEVEL_SERVICE, DISABILITY_TYPE_30, SPOUSE_UNEMPLOYABILITY, MOTHER_ELIGIBILITY etc.
+        // Ensure these are defined if they are used as nextQuestionId.
     };
 
     // DOM elements
@@ -398,13 +401,14 @@
     // Count total possible steps in the tree
     function countTotalSteps() {
         // Simple approximation - would be refined based on actual tree complexity
-        return 10;
+        // This could be made more dynamic by traversing the tree for the longest path.
+        return 10; 
     }
 
     // Start the tool after accepting disclaimer
     function startTool() {
-        elements.disclaimer.style.display = 'none';
-        elements.toolInterface.style.display = 'block';
+        if (elements.disclaimer) elements.disclaimer.classList.add('hidden');
+        if (elements.toolInterface) elements.toolInterface.classList.remove('hidden');
         displayQuestion('START');
     }
 
@@ -413,6 +417,10 @@
         const question = vetPreferenceTree[questionId];
         if (!question) {
             console.error('Question not found:', questionId);
+            // Optionally, handle this error more gracefully, e.g., show an error message
+            // or navigate to a default state like 'START'.
+            // For now, we'll prevent further execution to avoid more errors.
+            if (elements.questionArea) elements.questionArea.innerHTML = '<p class="error-message">An error occurred. Please restart the tool.</p>';
             return;
         }
 
@@ -423,30 +431,44 @@
         // Update progress
         updateProgress();
         
-        // Clear previous content
-        elements.questionArea.innerHTML = '';
-        elements.answersArea.innerHTML = '';
-        elements.resultArea.style.display = 'none';
+        // Clear previous content and manage visibility
+        if (elements.questionArea) {
+            elements.questionArea.innerHTML = '';
+            elements.questionArea.classList.remove('hidden');
+        }
+        if (elements.answersArea) {
+            elements.answersArea.innerHTML = '';
+            elements.answersArea.classList.remove('hidden');
+        }
+        if (elements.resultArea) elements.resultArea.classList.add('hidden');
         
         // Display question
         const questionHTML = `
             <h2>${question.questionText}</h2>
             ${question.helpText ? `<p class="help-text">${question.helpText}</p>` : ''}
         `;
-        elements.questionArea.innerHTML = questionHTML;
+        if (elements.questionArea) elements.questionArea.innerHTML = questionHTML;
         
         // Display answers
-        question.answers.forEach((answer, index) => {
-            const button = document.createElement('button');
-            button.className = 'answer-option';
-            button.textContent = answer.answerText;
-            button.setAttribute('data-answer-index', index);
-            button.addEventListener('click', () => handleAnswer(answer));
-            elements.answersArea.appendChild(button);
-        });
+        if (elements.answersArea) {
+            question.answers.forEach((answer, index) => {
+                const button = document.createElement('button');
+                button.className = 'answer-option';
+                button.textContent = answer.answerText;
+                button.setAttribute('data-answer-index', index);
+                button.addEventListener('click', () => handleAnswer(answer));
+                elements.answersArea.appendChild(button);
+            });
+        }
         
         // Update navigation
-        elements.backButton.style.display = state.history.length > 0 ? 'inline-block' : 'none';
+        if (elements.backButton) {
+            if (state.history.length > 0) {
+                elements.backButton.classList.remove('hidden');
+            } else {
+                elements.backButton.classList.add('hidden');
+            }
+        }
     }
 
     // Handle answer selection
@@ -459,17 +481,22 @@
             displayQuestion(answer.nextQuestionId);
         } else if (answer.resultOutcome) {
             displayResult(answer.resultOutcome);
+        } else {
+            // Handle cases where an answer might not lead to a next question or a result
+            // This could be an error in the tree definition or an unhandled path.
+            console.warn('Answer does not lead to a next question or result:', answer);
+            if (elements.questionArea) elements.questionArea.innerHTML = '<p class="error-message">Configuration error. Next step not defined.</p>';
         }
     }
 
     // Display result
     function displayResult(result) {
-        elements.questionArea.style.display = 'none';
-        elements.answersArea.style.display = 'none';
-        elements.resultArea.style.display = 'block';
+        if (elements.questionArea) elements.questionArea.classList.add('hidden');
+        if (elements.answersArea) elements.answersArea.classList.add('hidden');
+        if (elements.resultArea) elements.resultArea.classList.remove('hidden');
         
         // Apply result type styling
-        elements.resultArea.className = `tool-result ${result.type}`;
+        if (elements.resultArea) elements.resultArea.className = `tool-result ${result.type}`;
         
         // Build result HTML
         let resultHTML = `
@@ -512,9 +539,9 @@
             `;
         }
         
-        elements.resultArea.innerHTML = resultHTML;
-        elements.printButton.style.display = 'inline-block';
-        elements.backButton.style.display = 'none';
+        if (elements.resultArea) elements.resultArea.innerHTML = resultHTML;
+        if (elements.printButton) elements.printButton.classList.remove('hidden');
+        if (elements.backButton) elements.backButton.classList.add('hidden'); // No going back from result screen
         
         // Update progress to 100%
         state.currentStep = state.totalSteps;
@@ -524,23 +551,31 @@
     // Update progress bar
     function updateProgress() {
         const progress = (state.currentStep / state.totalSteps) * 100;
-        elements.progressBar.style.width = `${progress}%`;
-        elements.currentStep.textContent = state.currentStep;
+        if (elements.progressBar) elements.progressBar.style.width = `${progress}%`;
+        if (elements.currentStep) elements.currentStep.textContent = state.currentStep;
         
         // Update ARIA attributes
         const progressContainer = document.querySelector('.tool-progress');
         if (progressContainer) {
-            progressContainer.setAttribute('aria-valuenow', progress);
+            progressContainer.setAttribute('aria-valuenow', Math.round(progress)); // Ensure integer for aria-valuenow
         }
     }
 
     // Go back to previous question
     function goBack() {
         if (state.history.length > 0) {
-            state.history.pop(); // Remove current
-            const previousId = state.history.length > 0 ? state.history[state.history.length - 1] : 'START';
-            state.currentStep = Math.max(1, state.currentStep - 2); // Adjust for re-display
-            displayQuestion(previousId);
+            state.history.pop(); // Remove current question from history
+            // The question to display is now the *new* last item in history, or START if history is empty
+            const previousQuestionId = state.history.length > 0 ? state.history.pop() : 'START'; 
+            // state.history.pop() above removes the question we are going back TO, 
+            // so it will be re-added by handleAnswer or displayQuestion.
+            // We need to adjust currentStep. When displaying a question, it increments.
+            // So, if we are going back one step effectively, currentStep should be currentStep - 2
+            // to account for the increment in displayQuestion.
+            state.currentStep = Math.max(0, state.currentStep - 2); 
+            // (If currentStep was 1, it becomes -1, then Math.max makes it 0. displayQuestion increments it to 1)
+
+            displayQuestion(previousQuestionId);
         }
     }
 
@@ -550,13 +585,14 @@
         state.currentQuestionId = null;
         state.history = [];
         state.answers = {};
-        state.currentStep = 0;
+        state.currentStep = 0; // Will be incremented to 1 by displayQuestion
         
-        // Reset UI
-        elements.questionArea.style.display = 'block';
-        elements.answersArea.style.display = 'block';
-        elements.resultArea.style.display = 'none';
-        elements.printButton.style.display = 'none';
+        // Reset UI visibility
+        if (elements.questionArea) elements.questionArea.classList.remove('hidden');
+        if (elements.answersArea) elements.answersArea.classList.remove('hidden');
+        if (elements.resultArea) elements.resultArea.classList.add('hidden');
+        if (elements.printButton) elements.printButton.classList.add('hidden');
+        // backButton will be hidden by displayQuestion('START')
         
         // Start over
         displayQuestion('START');

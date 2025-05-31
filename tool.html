@@ -27,7 +27,7 @@
           <button id="accept-disclaimer" class="btn btn-primary">I Understand - Continue to Tool</button>
         </div>
         <!-- Tool Interface (hidden until disclaimer accepted) -->
-        <div id="tool-interface" style="display: none;">
+        <div id="tool-interface" class="hidden"> {/* MODIFIED: Added class="hidden", removed inline style */}
           <!-- Progress Indicator -->
           <div class="tool-progress" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
             <div class="progress-bar"></div>
@@ -43,14 +43,14 @@
             <!-- Answer options dynamically inserted here -->
           </div>
           <!-- Result Area -->
-          <div id="result-area" class="tool-result" style="display: none;">
+          <div id="result-area" class="tool-result hidden"> {/* MODIFIED: Added hidden class, removed inline style */}
             <!-- Results displayed here -->
           </div>
           <!-- Navigation Controls -->
           <div class="tool-controls">
-            <button id="back-button" class="btn btn-secondary" style="display: none;">← Previous Question</button>
+            <button id="back-button" class="btn btn-secondary hidden">← Previous Question</button> {/* MODIFIED: Added hidden class, removed inline style */}
             <button id="restart-button" class="btn btn-secondary">Start Over</button>
-            <button id="print-button" class="btn btn-secondary" style="display: none;">Print Results</button>
+            <button id="print-button" class="btn btn-secondary hidden">Print Results</button> {/* MODIFIED: Added hidden class, removed inline style */}
           </div>
         </div>
         <!-- End of Tool Interface -->
