@@ -25,21 +25,24 @@
             return Promise.resolve(); // Header already exists, resolve immediately
         }
 
-        return fetch('/header.html') // Ensure header.html is at the root
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Header file not found');
-                }
-                return response.text();
-            })
+        // Try multiple possible paths for the header file
+        const headerPaths = ['header.html', './header.html', '/header.html'];
+        
+        return tryLoadFile(headerPaths)
             .then(data => {
-                // Insert header after skip link
-                const skipLink = document.querySelector('.skip-link');
-                if (skipLink) {
-                    skipLink.insertAdjacentHTML('afterend', data);
+                // Look for header placeholder first
+                const headerPlaceholder = document.getElementById('header-placeholder');
+                if (headerPlaceholder) {
+                    headerPlaceholder.innerHTML = data;
                 } else {
-                    // Fallback: insert at beginning of body
-                    document.body.insertAdjacentHTML('afterbegin', data);
+                    // Insert header after skip link
+                    const skipLink = document.querySelector('.skip-link');
+                    if (skipLink) {
+                        skipLink.insertAdjacentHTML('afterend', data);
+                    } else {
+                        // Fallback: insert at beginning of body
+                        document.body.insertAdjacentHTML('afterbegin', data);
+                    }
                 }
 
                 // Set active page indicator after header is loaded
@@ -50,38 +53,67 @@
             })
             .catch(error => {
                 console.error('Error loading header:', error);
+                console.log('Current location:', window.location.href);
                 // Graceful fallback - site still works without dynamic header
-                // Consider re-throwing or returning Promise.reject(error) if Promise.all
-                // should definitely fail if the header fails. For now, it logs and continues.
             });
     }
 
     // Load footer HTML
     function loadFooter() {
-        return fetch('/footer.html') // Ensure footer.html is at the root
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Footer file not found');
-                }
-                return response.text();
-            })
+        // Try multiple possible paths for the footer file
+        const footerPaths = ['footer.html', './footer.html', '/footer.html'];
+        
+        return tryLoadFile(footerPaths)
             .then(data => {
-                // Assuming you want to inject it right before the closing </body> tag
-                // or into a specific placeholder div if you prefer.
-                // For simplicity, let's append it to the body.
-                // If you have a main script tag as the last element, inject before it.
-                const scripts = document.body.querySelectorAll('script');
-                const lastScript = scripts[scripts.length - 1];
-                if (lastScript && lastScript.parentNode === document.body) { // Ensure lastScript is a direct child of body
-                    lastScript.insertAdjacentHTML('beforebegin', data);
+                // Look for footer placeholder first
+                const footerPlaceholder = document.getElementById('footer-placeholder');
+                if (footerPlaceholder) {
+                    footerPlaceholder.innerHTML = data;
                 } else {
-                    document.body.insertAdjacentHTML('beforeend', data);
+                    // Fallback: inject before scripts or at end of body
+                    const scripts = document.body.querySelectorAll('script');
+                    const lastScript = scripts[scripts.length - 1];
+                    if (lastScript && lastScript.parentNode === document.body) {
+                        lastScript.insertAdjacentHTML('beforebegin', data);
+                    } else {
+                        document.body.insertAdjacentHTML('beforeend', data);
+                    }
                 }
             })
             .catch(error => {
                 console.error('Error loading footer:', error);
-                // Similar to header, consider error handling impact on Promise.all
+                console.log('Current location:', window.location.href);
             });
+    }
+
+    // Helper function to try loading files from multiple paths
+    function tryLoadFile(paths) {
+        let currentPathIndex = 0;
+        
+        function attemptLoad() {
+            if (currentPathIndex >= paths.length) {
+                return Promise.reject(new Error('All paths failed'));
+            }
+            
+            const currentPath = paths[currentPathIndex];
+            console.log(`Attempting to load: ${currentPath}`);
+            
+            return fetch(currentPath)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    console.log(`Successfully loaded: ${currentPath}`);
+                    return response.text();
+                })
+                .catch(error => {
+                    console.log(`Failed to load ${currentPath}:`, error.message);
+                    currentPathIndex++;
+                    return attemptLoad();
+                });
+        }
+        
+        return attemptLoad();
     }
 
     // Set active navigation link
@@ -95,7 +127,7 @@
 
             const linkHref = link.getAttribute('href');
             if (linkHref === currentPath ||
-                (currentPath === '/' && linkHref === '/index.html') || // Handle common index variations
+                (currentPath === '/' && linkHref === '/index.html') ||
                 (currentPath === '/index.html' && linkHref === '/')) {
                 link.setAttribute('aria-current', 'page');
                 link.classList.add('active');
@@ -105,7 +137,7 @@
 
     // Initialize dropdown menus
     function initializeDropdowns() {
-        const dropdowns = document.querySelectorAll('.dropdown > a'); // Assumes dropdowns are in loaded header/footer
+        const dropdowns = document.querySelectorAll('.dropdown > a');
 
         dropdowns.forEach(dropdown => {
             dropdown.addEventListener('click', function (e) {
@@ -171,8 +203,6 @@
 
     // Update current year
     function initializeYear() {
-        // This function might be called before footer (where year might be) is fully processed by browser
-        // but after HTML is injected. This is usually fine.
         const yearElements = document.querySelectorAll('#current-year');
         const currentYear = new Date().getFullYear();
         yearElements.forEach(el => {
@@ -184,7 +214,6 @@
     function initializeLastUpdated() {
         const lastUpdatedEl = document.getElementById('last-updated');
         if (lastUpdatedEl) {
-            // This would be replaced with actual GitHub API call in production
             const lastUpdated = new Date().toLocaleDateString('en-US', {
                 year: 'numeric',
                 month: 'long',
@@ -196,16 +225,15 @@
 
     // Enhanced navigation functionality
     function initializeNavigation() {
-        // Mobile menu toggle if implemented (assuming it's in header/footer)
+        // Mobile menu toggle if implemented
         const menuToggle = document.querySelector('.menu-toggle');
-        const nav = document.querySelector('nav ul'); // Main nav list
+        const nav = document.querySelector('nav ul');
 
         if (menuToggle && nav) {
             menuToggle.addEventListener('click', function () {
                 nav.classList.toggle('active');
                 const expanded = this.getAttribute('aria-expanded') === 'true';
                 this.setAttribute('aria-expanded', !expanded);
-                // Announce menu state change
                 announceToScreenReader(expanded ? 'Navigation menu collapsed' : 'Navigation menu expanded');
             });
         }
@@ -224,13 +252,10 @@
                         block: 'start'
                     });
 
-                    // Focus the target element for accessibility
-                    // Use setTimeout to ensure focus happens after scroll
                     setTimeout(() => {
-                        targetElement.focus({ preventScroll: true }); // preventScroll if already handled
-                        // Announce the jump
+                        targetElement.focus({ preventScroll: true });
                         announceToScreenReader(`Scrolled to ${targetElement.textContent || targetId}`);
-                    }, 0); // A small delay can help
+                    }, 0);
                 }
             });
         });
@@ -238,30 +263,28 @@
 
     // Accessibility enhancements
     function initializeAccessibility() {
-        // Announce page changes for screen readers (ensure it's created only once)
+        // Announce page changes for screen readers
         let announcer = document.getElementById('live-announcer');
         if (!announcer) {
             announcer = document.createElement('div');
             announcer.setAttribute('role', 'status');
             announcer.setAttribute('aria-live', 'polite');
             announcer.setAttribute('aria-atomic', 'true');
-            announcer.className = 'sr-only'; // Use the .sr-only class defined later
+            announcer.className = 'sr-only';
             announcer.id = 'live-announcer';
             document.body.appendChild(announcer);
         }
-
 
         // Add skip to main content functionality
         const skipLink = document.querySelector('.skip-link');
         if (skipLink) {
             skipLink.addEventListener('click', function (e) {
                 const targetSelector = this.getAttribute('href');
-                // Ensure targetSelector is a valid selector (e.g., starts with #)
                 if (targetSelector && targetSelector.startsWith('#')) {
                     const target = document.querySelector(targetSelector);
                     if (target) {
                         e.preventDefault();
-                        target.setAttribute('tabindex', '-1'); // Make it focusable if not already
+                        target.setAttribute('tabindex', '-1');
                         target.focus();
                         target.scrollIntoView();
                         announceToScreenReader(`Skipped to main content`);
@@ -270,34 +293,16 @@
             });
         }
 
-        // Add keyboard navigation hints (consider if this is still needed or how to implement better)
-        // This generic check might be too broad or produce too many warnings.
-        // const interactiveElements = document.querySelectorAll('a, button, input, select, textarea');
-        // interactiveElements.forEach(el => {
-        //     if (!el.getAttribute('aria-label') && !el.getAttribute('aria-labelledby')) {
-        //         const text = el.textContent || el.value || el.placeholder;
-        //         if (!text || text.trim() === '') {
-        //             // Only warn if it's visible and truly lacks context
-        //             if (el.offsetWidth > 0 || el.offsetHeight > 0) {
-        //                  console.warn('Interactive element without accessible label:', el);
-        //             }
-        //         }
-        //     }
-        // });
-
-        // Announce page load completion (might be better tied to specific content readiness)
-        // Wait for a brief moment after DOMContentLoaded and header/footer loading
+        // Announce page load completion
         setTimeout(() => {
             announceToScreenReader('Page loaded successfully');
-        }, 500); // Adjust delay as needed
+        }, 500);
     }
 
     // Initialize analytics (placeholder)
     function initializeAnalytics() {
-        // This would be replaced with actual analytics code
         if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
             console.log('Analytics would initialize here');
-            // Example: Plausible, Umami, or similar privacy-respecting analytics
         }
     }
 
@@ -305,21 +310,14 @@
     function announceToScreenReader(message) {
         const announcer = document.getElementById('live-announcer');
         if (announcer) {
-            // Clear previous message before setting new one to ensure it's read
             announcer.textContent = '';
-            // Slight delay can sometimes help ensure the change is picked up
             setTimeout(() => {
                 announcer.textContent = message;
-                 // Optionally clear after a while if messages are transient
-                 // setTimeout(() => { announcer.textContent = ''; }, 3000);
             }, 50);
         }
     }
 
-    // Make utility function globally available if needed by other scripts or inline event handlers
-    // window.announceToScreenReader = announceToScreenReader; // Uncomment if needed globally
-
-    // Utility: Screen reader only class and other common styles (ensure this runs once)
+    // Add utility styles
     if (!document.getElementById('common-utility-styles')) {
         const utilityStyles = document.createElement('style');
         utilityStyles.id = 'common-utility-styles';
@@ -336,16 +334,183 @@
                 border-width: 0;
             }
             
-            nav a.active { /* More specific selector if needed */
+            nav a.active {
                 font-weight: bold;
-                /* text-decoration: underline; */ /* Example active style */
             }
             
-            .dropdown.open > .dropdown-content { /* Ensure .dropdown-content exists */
+            .dropdown.open > .dropdown-content {
                 display: block;
             }
 
-            /* Add other minimal critical CSS needed by JS if any */
+            /* Header Styles */
+            header {
+                background-color: #003366;
+                color: #fff;
+                padding: 1rem 0;
+                margin-bottom: 0;
+            }
+
+            .header-content {
+                max-width: 960px;
+                margin: 0 auto;
+                padding: 0 20px;
+                text-align: center;
+            }
+
+            .header-content h1 {
+                margin: 0 0 0.5rem 0;
+                color: #fff;
+                border-bottom: none;
+            }
+
+            .tagline {
+                margin: 0;
+                font-style: italic;
+                opacity: 0.9;
+            }
+
+            /* Navigation Styles */
+            nav {
+                background-color: #002244;
+                padding: 0;
+            }
+
+            nav ul {
+                max-width: 960px;
+                margin: 0 auto;
+                padding: 0 20px;
+                list-style: none;
+                display: flex;
+                flex-wrap: wrap;
+            }
+
+            nav li {
+                position: relative;
+                margin-bottom: 0;
+            }
+
+            nav a {
+                display: block;
+                padding: 1rem 1.5rem;
+                color: #fff;
+                text-decoration: none;
+                transition: background-color 0.3s ease;
+            }
+
+            nav a:hover,
+            nav a:focus {
+                background-color: #0056b3;
+                text-decoration: none;
+                color: #fff;
+            }
+
+            /* Dropdown styles */
+            .dropdown-content {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                background-color: #002244;
+                min-width: 200px;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+                z-index: 1000;
+            }
+
+            .dropdown:hover .dropdown-content,
+            .dropdown:focus-within .dropdown-content {
+                display: block;
+            }
+
+            .dropdown-content li {
+                width: 100%;
+            }
+
+            .dropdown-content a {
+                padding: 0.75rem 1rem;
+                border-bottom: 1px solid #003366;
+            }
+
+            .dropdown-content a:hover {
+                background-color: #0056b3;
+            }
+
+            /* Footer Styles */
+            footer {
+                background-color: #333;
+                color: #fff;
+                padding: 2rem 0 1rem 0;
+                margin-top: 2rem;
+            }
+
+            .footer-content {
+                max-width: 960px;
+                margin: 0 auto;
+                padding: 0 20px;
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 2rem;
+            }
+
+            .footer-section h3 {
+                color: #fff;
+                margin-bottom: 1rem;
+            }
+
+            .footer-section ul {
+                list-style: none;
+                padding: 0;
+            }
+
+            .footer-section li {
+                margin-bottom: 0.5rem;
+            }
+
+            .footer-section a {
+                color: #ccc;
+            }
+
+            .footer-section a:hover {
+                color: #fff;
+            }
+
+            .footer-bottom {
+                max-width: 960px;
+                margin: 2rem auto 0 auto;
+                padding: 1rem 20px 0 20px;
+                border-top: 1px solid #555;
+                text-align: center;
+                font-size: 0.9rem;
+                color: #ccc;
+            }
+
+            /* Mobile Navigation */
+            @media (max-width: 768px) {
+                nav ul {
+                    flex-direction: column;
+                    padding: 0;
+                }
+                
+                nav li {
+                    width: 100%;
+                }
+                
+                .dropdown-content {
+                    position: static;
+                    display: none;
+                    box-shadow: none;
+                    background-color: #001122;
+                }
+                
+                .dropdown:hover .dropdown-content,
+                .dropdown:focus-within .dropdown-content {
+                    display: block;
+                }
+                
+                .footer-content {
+                    grid-template-columns: 1fr;
+                    gap: 1rem;
+                }
+            }
         `;
         document.head.appendChild(utilityStyles);
     }
