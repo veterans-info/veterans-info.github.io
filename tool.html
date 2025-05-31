@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Veterans' Preference Interactive Guide - Eligibility Assessment Tool</title>
+    <meta name="description" content="Interactive tool to help determine Veterans' Preference eligibility and required documentation based on OPM guidelines.">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="tool-styles.css">
+    <!-- Favicon (assuming from index.html structure, adjust if needed) -->
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
+    <!-- Preconnect to external domains (assuming from index.html structure, adjust if needed) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+</head>
+<body>
+    <a href="#tool-content" class="skip-link">Skip to assessment tool</a>
+
+    <!-- Header reused from index.html -->
+    <header role="banner">
+        <div class="header-content">
+            <h1>Veterans' Preference Guide</h1>
+            <p class="tagline">Your Official Resource for Federal Employment Benefits</p>
+        </div>
+        <nav role="navigation" aria-label="Main navigation">
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li class="dropdown">
+                    <a href="#" aria-haspopup="true" aria-expanded="false">Eligibility</a>
+                    <ul class="dropdown-content">
+                        <li><a href="/content/eligibility/basic-requirements.html">Basic Requirements</a></li>
+                        <li><a href="/content/eligibility/character-of-discharge.html">Character of Discharge</a></li>
+                        <li><a href="/content/eligibility/documentation.html">Required Documents</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" aria-haspopup="true" aria-expanded="false">Preference Types</a>
+                    <ul class="dropdown-content">
+                        <li><a href="/content/preference-types/5-point.html">5-Point Preference</a></li>
+                        <li><a href="/content/preference-types/10-point.html">10-Point Preference</a></li>
+                        <li><a href="/content/preference-types/derivative.html">Derivative Preference</a></li>
+                    </ul>
+                </li>
+                <li><a href="/tool.html" aria-current="page">Interactive Guide</a></li>
+                <li><a href="/content/faq.html">FAQ</a></li>
+            </ul>
+        </nav>
+    </header>
+    <!-- End of reused header -->
+
+    <main id="tool-content" role="main">
+        <div class="tool-container">
+            <h1>Veterans' Preference Interactive Guide</h1>
+
+            <!-- Critical Disclaimer -->
+            <div class="tool-disclaimer" role="alert">
+                <h2>Important Notice</h2>
+                <p><strong>This tool provides guidance based on the OPM Vet Guide for HR Professionals. It is for informational purposes only and is NOT an official determination of eligibility or a legal document.</strong></p>
+                <p>Always refer to official OPM documentation and consult with your agency's HR department or a Veterans Service Officer for definitive determinations.</p>
+                <button id="accept-disclaimer" class="btn btn-primary">I Understand - Continue to Tool</button>
+            </div>
+
+            <!-- Tool Interface (hidden until disclaimer accepted) -->
+            <div id="tool-interface" style="display: none;">
+                <!-- Progress Indicator -->
+                <div class="tool-progress" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                    <div class="progress-bar"></div>
+                    <span class="progress-text">Step <span id="current-step">1</span> of <span id="total-steps">10</span></span>
+                </div>
+
+                <!-- Question Area -->
+                <div id="question-area" class="tool-question">
+                    <!-- Questions dynamically inserted here -->
+                </div>
+
+                <!-- Answer Area -->
+                <div id="answers-area" class="tool-answers" role="radiogroup">
+                    <!-- Answer options dynamically inserted here -->
+                </div>
+
+                <!-- Result Area -->
+                <div id="result-area" class="tool-result" style="display: none;">
+                    <!-- Results displayed here -->
+                </div>
+
+                <!-- Navigation Controls -->
+                <div class="tool-controls">
+                    <button id="back-button" class="btn btn-secondary" style="display: none;">← Previous Question</button>
+                    <button id="restart-button" class="btn btn-secondary">Start Over</button>
+                    <button id="print-button" class="btn btn-secondary" style="display: none;">Print Results</button>
+                </div>
+            </div>
+            <!-- End of Tool Interface -->
+
+            <!-- Help Section -->
+            <aside class="tool-help">
+                <h3>Need Help?</h3>
+                <ul>
+                    <li><a href="/content/faq.html">Frequently Asked Questions</a></li>
+                    <li><a href="https://www.opm.gov/policy-data-oversight/veterans-services/vet-guide-for-hr-professionals/" target="_blank" rel="noopener noreferrer">OPM Vet Guide</a></li>
+                    <li>Contact your agency HR or a Veterans Service Officer for personalized assistance</li>
+                </ul>
+            </aside>
+        </div>
+    </main>
+
+    <!-- Footer reused from index.html -->
+    <footer role="contentinfo">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="/sitemap.xml">Sitemap</a></li>
+                    <li><a href="/accessibility-statement.html">Accessibility</a></li>
+                    <li><a href="/privacy-policy.html">Privacy Policy</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Resources</h3>
+                <ul>
+                    <li><a href="https://www.opm.gov" target="_blank" rel="noopener noreferrer">OPM.gov</a></li>
+                    <li><a href="https://www.va.gov" target="_blank" rel="noopener noreferrer">VA.gov</a></li>
+                    <li><a href="https://www.usajobs.gov" target="_blank" rel="noopener noreferrer">USAJOBS</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Contact</h3>
+                <p>For site feedback: <a href="mailto:feedback@veterans-info.github.io">feedback@veterans-info.github.io</a></p>
+                <p>For official inquiries: Contact your agency HR or VSO</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; <span id="current-year"></span> Veterans Info. This is an unofficial informational resource.</p>
+            <p>Last updated: <span id="last-updated">Loading...</span></p>
+        </div>
+    </footer>
+    <!-- End of reused footer -->
+
+    <script src="script.js"></script>
+    <script src="tool.js"></script>
+</body>
+</html>
