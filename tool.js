@@ -475,7 +475,7 @@
             disclaimerTextContainer: document.querySelector('#question-area'), // Initial disclaimer text is here
             acceptButton: document.getElementById('accept-disclaimer'),
             toolInterface: document.getElementById('tool-interface'),
-            questionArea: document.getElementById('#question-area'), // Will be reused for questions
+            questionArea: document.getElementById('question-area'), // Will be reused for questions
             answersArea: document.getElementById('answers-area'),   // Will be reused for answers
             resultArea: document.getElementById('result-area'),
             progressContainer: document.querySelector('.tool-progress'), // Select the container
@@ -495,6 +495,14 @@
         elements.progressContainer?.classList.add('fade-element');
         elements.backButton?.classList.add('fade-element');
         elements.printButton?.classList.add('fade-element');
+
+        // ADD THE FOLLOWING to make initial disclaimer and accept button visible:
+        if (elements.disclaimerTextContainer) {
+            elements.disclaimerTextContainer.classList.add('is-visible');
+        }
+        if (elements.answersArea) {
+            elements.answersArea.classList.add('is-visible');
+        }
 
         if (elements.acceptButton) {
             elements.acceptButton.addEventListener('click', startTool);
