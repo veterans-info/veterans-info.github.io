@@ -440,6 +440,206 @@ time {
     display: none !important;
 }
 
+/* --- Header Styles --- */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100; /* Ensure this is less than skip-link if skip link needs to be on top */
+  background: rgba(255, 255, 255, 0.95); /* Use a variable if theme changes this */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1); /* Use neutral color variable */
+}
+
+.header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem; /* Use spacing variables */
+  max-width: 1200px; /* Or a site width variable */
+  margin: 0 auto;
+}
+
+.header-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem; /* Use spacing variable */
+}
+
+.logo-icon {
+  /* color: #1a5490; */ /* FROM */
+  color: var(--color-secondary); /* TO: Use theme's secondary color */
+  flex-shrink: 0;
+}
+
+.site-title {
+  font-size: 1.25rem; /* Use font size variable */
+  font-weight: 600;
+  color: var(--color-primary, #1a1a1a); /* Use theme's primary text color, fallback if needed */
+}
+
+.main-nav ul {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 2rem; /* Use spacing variable */
+}
+
+.main-nav a {
+  text-decoration: none;
+  color: var(--color-primary, #333); /* Use theme's primary text color */
+  font-weight: 500;
+  padding: 0.5rem 0; /* Use spacing variable */
+  transition: color 0.2s; /* Use transition variable */
+}
+
+.main-nav a:hover, .main-nav a:focus { /* Added :focus */
+  /* color: #1a5490; */ /* FROM */
+  color: var(--color-secondary-darker); /* TO: Consistent hover color */
+  text-decoration: none; /* Standard to remove underline from nav items unless desired */
+}
+.main-nav a.active { /* Style for active link, if not handled by script.js */
+    color: var(--color-secondary);
+    font-weight: bold; /* Or a bottom border */
+}
+
+
+.mega-menu {
+  position: relative;
+}
+
+.mega-menu > a { /* Ensure dropdown trigger styles are distinct or match other nav links */
+    /* Inherits .main-nav a styles */
+}
+.mega-menu > a[aria-expanded="true"] { /* Style for when dropdown is open */
+    color: var(--color-secondary-darker);
+}
+
+
+.mega-menu-content {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: white; /* Use variable if available for panel backgrounds */
+  border: 1px solid rgba(0, 0, 0, 0.1); /* Use neutral color variable */
+  border-radius: 8px; /* Use border radius variable */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Use shadow variable */
+  padding: 1.5rem; /* Use spacing variable */
+  min-width: 280px;
+  margin-top: 0.5rem; /* Use spacing variable for gap */
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s, visibility 0.2s; /* Use transition variable */
+  z-index: 10; /* Ensure dropdown is above other content */
+}
+
+.mega-menu:hover .mega-menu-content,
+.mega-menu > a:focus + .mega-menu-content, /* Show on focus of trigger */
+.mega-menu-content:hover { /* Keep open when hovering content */
+  opacity: 1;
+  visibility: visible;
+}
+
+
+.mega-menu-group h3 {
+  font-size: 0.875rem; /* Use font size variable */
+  color: var(--color-neutral-700, #666); /* Use neutral text color */
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 0.75rem 0; /* Use spacing variables */
+}
+
+.mega-menu-group ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  /* display: flex; */ /* No, these are vertical lists */
+  /* flex-direction: column; */ /* Default for ul */
+}
+
+
+.mega-menu-group li {
+  margin-bottom: 0.5rem; /* Use spacing variable */
+}
+.mega-menu-group li:last-child {
+    margin-bottom: 0;
+}
+
+.mega-menu-group a {
+  color: var(--color-primary, #333); /* Use theme's primary text color */
+  text-decoration: none;
+  font-weight: 400;
+  display: block;
+  padding: 0.25rem 0; /* Use spacing variable */
+  border-radius: 4px; /* Add radius for better hover/focus state */
+  transition: background-color 0.2s, color 0.2s; /* Use transition variable */
+
+}
+
+.mega-menu-group a:hover, .mega-menu-group a:focus {
+  /* color: #1a5490; */ /* FROM */
+  color: var(--color-secondary-darker); /* TO: Consistent hover color */
+  background-color: var(--color-neutral-100, #f0f0f0); /* Add subtle background on hover/focus */
+  text-decoration: none;
+}
+
+
+.search-button {
+  background: none;
+  border: none;
+  padding: 0.5rem; /* Use spacing variable */
+  cursor: pointer;
+  color: var(--color-neutral-700, #666); /* Use neutral text color */
+  transition: color 0.2s; /* Use transition variable */
+  border-radius: 4px; /* For focus indicator consistency */
+}
+
+.search-button:hover, .search-button:focus {
+  /* color: #1a5490; */ /* FROM */
+  color: var(--color-secondary-darker); /* TO: Consistent hover color */
+}
+.search-button:focus-visible { /* Explicit focus style */
+    outline: 2px solid var(--color-secondary-darker);
+    outline-offset: 2px;
+}
+
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .header-container {
+    padding: 1rem; /* Use spacing variable */
+  }
+  
+  .site-title {
+    font-size: 1.1rem; /* Use font size variable */
+  }
+  
+  .main-nav ul {
+    gap: 1rem; /* Use spacing variable */
+  }
+  
+  .main-nav { /* Example: Hide full nav, replace with hamburger - current setup might not support this without JS */
+    /* display: none;  */
+    /* Or alternatively, make it scrollable or wrap if space is an issue */
+    /* position: absolute; top: 100%; left: 0; background: white; width: 100%; box-shadow: var(--shadow-medium); */
+  }
+  /* .main-nav.active { display: block; } */ /* If using JS to toggle */
+
+
+  .search-button { /* Ensure search is still accessible */
+    /* Potentially move it or ensure it doesn't overlap with other elements */
+  }
+
+  .mega-menu-content { /* Adjust mega menu for mobile if it remains visible */
+    min-width: calc(100vw - 2rem); /* Full width minus padding */
+    left: 1rem; /* Adjust to align with container padding */
+    transform: translateX(0);
+    margin-top: 0.25rem;
+  }
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     :root {
