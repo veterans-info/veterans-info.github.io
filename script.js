@@ -158,7 +158,7 @@
         // Mobile menu toggle if implemented (header.html has a search button, not a hamburger menu toggle explicitly)
         // This might be for a different menu toggle pattern.
         const menuToggle = document.querySelector('.menu-toggle'); // Example selector
-        const navElement = document.querySelector('nav.main-nav ul'); // Targeting new header's nav
+        const navElement = document.querySelector('nav.main-nav'); // Targeting the main navigation container
 
         if (menuToggle && navElement) {
             menuToggle.addEventListener('click', function () {

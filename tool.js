@@ -475,7 +475,7 @@
             disclaimerTextContainer: document.querySelector('#question-area'), // Initial disclaimer text is here
             acceptButton: document.getElementById('accept-disclaimer'),
             toolInterface: document.getElementById('tool-interface'),
-            questionArea: document.getElementById('question-area'), // Will be reused for questions
+            questionArea: document.getElementById('#question-area'), // Will be reused for questions
             answersArea: document.getElementById('answers-area'),   // Will be reused for answers
             resultArea: document.getElementById('result-area'),
             progressContainer: document.querySelector('.tool-progress'), // Select the container
@@ -486,6 +486,15 @@
             restartButton: document.getElementById('restart-button'),
             printButton: document.getElementById('print-button')
         };
+
+        // Add fade-element class to elements that will be faded
+        elements.disclaimerTextContainer?.classList.add('fade-element');
+        elements.questionArea?.classList.add('fade-element');
+        elements.answersArea?.classList.add('fade-element');
+        elements.resultArea?.classList.add('fade-element');
+        elements.progressContainer?.classList.add('fade-element');
+        elements.backButton?.classList.add('fade-element');
+        elements.printButton?.classList.add('fade-element');
 
         if (elements.acceptButton) {
             elements.acceptButton.addEventListener('click', startTool);
@@ -590,7 +599,7 @@
         }
 
 
-        Promise.all(elementsToFadeOut.map(el => fadeOut(el, null, ANIMATION_DURATION / 2))).then(() => {
+        Promise.all(elementsToFadeOut.map(el => fadeOut(el))).then(() => {
             if (elements.disclaimerTextContainer) elements.disclaimerTextContainer.innerHTML = ''; // Clear disclaimer
             if (elements.answersArea) elements.answersArea.innerHTML = ''; // Clear accept button
 
@@ -599,12 +608,10 @@
                 fadeIn(elements.progressContainer);
             }
             
-            // *** FIX: Reset state.animating before calling displayQuestion ***
             state.animating = false;
             displayQuestion('START');
         }).catch(error => {
             console.error("Error fading out initial elements:", error);
-            // *** FIX: Reset state.animating on error too ***
             state.animating = false;
             displayQuestion('START'); // Attempt to display question anyway
         });
@@ -635,7 +642,7 @@
             // state.currentStep = Math.min(state.currentStep + 1, state.totalSteps); 
         }
         // If it's the first question after START, currentStep should be 1.
-        // currentStep update is now better handled in handleAnswer for forward, and goBack for backward.
+        // CurrentStep update is now better handled in handleAnswer for forward, and goBack for backward.
         // For initial START, currentStep is 0, after first answer it becomes 1.
         if (questionId === 'START' && state.history.length === 0) {
             state.currentStep = 0; // Special case for the very first display (progress bar starts before first answer)
@@ -679,7 +686,6 @@
                     button.style.animationDelay = `${index * 50}ms`;
                     button.textContent = answer.answerText;
                     button.setAttribute('data-answer-index', index);
-                    // *** FIX: Pass event.target (the button itself) to handleAnswer ***
                     button.addEventListener('click', (event) => handleAnswer(answer, event.target));
                     elements.answersArea.appendChild(button);
                 });
@@ -688,10 +694,8 @@
             if (elements.backButton) {
                 if (state.history.length > 0) {
                     elements.backButton.classList.remove('hidden');
-                    // fadeIn(elements.backButton); // No need to fade in if already visible or simply un-hiding
                 } else {
                     elements.backButton.classList.add('hidden');
-                    // fadeOut(elements.backButton, () => elements.backButton.classList.add('hidden'));
                 }
             }
 
@@ -700,9 +704,14 @@
             if(elements.answersArea) fadeInPromises.push(fadeIn(elements.answersArea));
 
             Promise.all(fadeInPromises).then(() => {
-                 setTimeout(() => {
+                setTimeout(() => {
                     const firstAnswer = elements.answersArea?.querySelector('.answer-option');
-                    if (firstAnswer) firstAnswer.focus();
+                    if (firstAnswer) {
+                        firstAnswer.focus();
+                    } else if (elements.questionArea) {
+                        // If no answer options (e.g., info-only question), focus the question heading
+                        elements.questionArea.querySelector('h2')?.focus();
+                    }
                     state.animating = false;
                 }, 50); // Shorter delay after fade-in to set focus
             });
@@ -713,7 +722,6 @@
     }
 
 
-    // *** FIX: Modified handleAnswer function signature and logic ***
     function handleAnswer(answer, clickedButtonElement) {
         if (state.animating) return;
 
@@ -734,8 +742,6 @@
 
 
         setTimeout(() => {
-            // Reset state.animating BEFORE calling the next display function,
-            // so that the next display function's own animation guard allows it to run.
             state.animating = false; 
 
             if (answer.nextQuestionId) {
@@ -804,21 +810,25 @@
                 }
                 
                 elements.resultArea.innerHTML = resultHTML;
-                // fadeIn(elements.resultArea); // Already handled by animate-fade-in class
 
                 if (elements.printButton) {
                     elements.printButton.classList.remove('hidden');
-                    // fadeIn(elements.printButton);
                 }
                 if (elements.backButton) {
                      elements.backButton.classList.add('hidden'); // No going back from final result via 'back'
+                }
+                // Set focus to the result area or its main heading
+                const resultHeading = elements.resultArea?.querySelector('h2');
+                if (resultHeading) {
+                    resultHeading.setAttribute('tabindex', '-1'); // Make it focusable
+                    resultHeading.focus();
                 }
             }
             setTimeout(() => { state.animating = false; }, ANIMATION_DURATION);
         }).catch(err => {
             console.error("Error during result display transition:", err);
             state.animating = false;
-        });;
+        });
     }
 
     function updateProgress() {
@@ -869,68 +879,47 @@
     }
 
 
-    function fadeIn(element, duration = ANIMATION_DURATION) {
+    function fadeIn(element) {
         return new Promise(resolve => {
             if (!element) { resolve(); return; }
-            element.style.opacity = '0';
-            element.style.display = ''; // Use '' to revert to stylesheet's display (e.g. block, flex)
-            element.classList.remove('hidden'); // Ensure hidden class is removed
+            element.classList.remove('hidden');
+            // Force reflow to ensure the transition plays
             element.offsetHeight; 
-            element.style.transition = `opacity ${duration}ms ease-out`;
-            element.style.opacity = '1';
-            setTimeout(() => {
-                element.style.removeProperty('opacity'); // Clean up inline style after transition
-                element.style.removeProperty('transition');
+            element.classList.add('is-visible');
+            element.addEventListener('transitionend', function handler() {
+                element.removeEventListener('transitionend', handler);
                 resolve();
-            }, duration);
+            }, { once: true });
         });
     }
 
-    function fadeOut(element, callback, duration = ANIMATION_DURATION) {
+    function fadeOut(element) {
         return new Promise(resolve => {
-            if (!element || element.style.opacity === '0') { // also check if already faded out
-                 if (element) element.classList.add('hidden'); // Ensure it's hidden if not already
-                 if (callback) callback();
-                 resolve();
-                 return;
-            }
-            element.style.transition = `opacity ${duration}ms ease-in`;
-            element.style.opacity = '0';
-            setTimeout(() => {
-                element.classList.add('hidden'); // Use class to hide
-                element.style.display = ''; // Reset inline display style if any was set by fadeIn
-                element.style.removeProperty('opacity'); // Clean up
-                element.style.removeProperty('transition');
-                if (callback) callback();
+            if (!element || element.classList.contains('hidden')) { resolve(); return; }
+            element.classList.remove('is-visible');
+            element.addEventListener('transitionend', function handler() {
+                element.removeEventListener('transitionend', handler);
+                element.classList.add('hidden');
                 resolve();
-            }, duration);
+            }, { once: true });
         });
     }
 
     function goBack() {
         if (state.animating || state.history.length === 0) return;
         
-        const currentQuestionBeingDiscarded = state.history.pop();
-        // Answer for this question is now invalid
-        delete state.answers[currentQuestionBeingDiscarded];
+        // Remove the current question from history and its answer
+        const currentQuestionId = state.history.pop();
+        delete state.answers[currentQuestionId];
 
-        const previousQuestionId = state.history.length > 0 ? state.history[state.history.length-1] : 'START';
-        // previousQuestionId actually refers to the question we want to go TO.
-        // If history is now empty, we are going back TO 'START'.
-        // If history has items, the last item is the question we want to re-display.
-
-        // state.currentStep should be the step number of the question we are going back TO.
-        // history.length is the number of questions already answered and in history.
+        // Determine the ID of the question to go back to
+        const previousQuestionId = state.history.length > 0 ? state.history[state.history.length - 1] : 'START';
+        
+        // Update current step based on history length
         state.currentStep = state.history.length;
         
-        // We don't pop again for displayQuestion; displayQuestion itself will use currentQuestionId based on this.
-        // If history is now empty, next call to displayQuestion('START') will rebuild START.
-        // If history has one item [Q1], we went from Q2 to Q1. Call displayQuestion(Q1). history.pop() in displayQuestion is not what we need.
-        // displayQuestion(previousQuestionId || 'START'); -- previousQuestionId here is the ID of the question to display.
-        // If history becomes empty, we go to 'START'.
-        displayQuestion(state.history.length > 0 ? state.history.pop() : 'START'); 
-        // Need to pop here because displayQuestion doesn't manage history for "going back" situations. displayQuestion will use the passed Id.
-
+        // Display the previous question. displayQuestion will handle focus.
+        displayQuestion(previousQuestionId);
     }
 
 
@@ -964,10 +953,18 @@
                 elements.answersArea.innerHTML = ''; // Clear any previous answers
                 elements.answersArea.appendChild(elements.acceptButton); // Re-add the accept button
 
-                fadeIn(elements.questionArea);
-                fadeIn(elements.answersArea);
+                Promise.all([
+                    fadeIn(elements.questionArea),
+                    fadeIn(elements.answersArea)
+                ]).then(() => {
+                    if (elements.acceptButton) {
+                        elements.acceptButton.focus(); // Set focus to the accept button
+                    }
+                    state.animating = false; // Reset after restart completion
+                });
+            } else {
+                state.animating = false; // Ensure animating is reset even if no elements to fade in
             }
-             state.animating = false; // Reset after restart completion
         }).catch(err => {
             console.error("Error during tool restart:", err);
             state.animating = false; // Ensure reset on error

@@ -424,11 +424,23 @@ button:not(.btn):focus-visible {
     outline-offset: 2px;
 }
 
-/* Transition states */
-.hidden {
-    display: none !important; /* Ensure this utility class works reliably */
+/* Animation classes for tool.js */
+.fade-element {
+    opacity: 0;
+    transition: opacity var(--animation-duration) ease-out; /* Use CSS variable for duration */
 }
 
+.fade-element.is-visible {
+    opacity: 1;
+}
+
+/* The .hidden class already exists, but ensure it's consistent */
+/* .hidden {
+    display: none !important;
+} */
+
+/* Transition states */
+/* The [style*="opacity: 0"] rule is still useful for preventing interaction during fade-out */
 [style*="opacity: 0"] { /* For JS-driven fade animations */
     pointer-events: none;
 }
