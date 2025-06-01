@@ -21,7 +21,6 @@
         // Check if header already exists (e.g. if JS disabled, or for development)
         if (document.querySelector('header[role="banner"]')) {
             setActiveNavLink();
-            initializeDropdowns();
             return Promise.resolve(); // Header already exists, resolve immediately
         }
 
@@ -47,9 +46,6 @@
 
                 // Set active page indicator after header is loaded
                 setActiveNavLink();
-
-                // Initialize dropdown functionality after header is loaded
-                initializeDropdowns();
             })
             .catch(error => {
                 console.error('Error loading header:', error);
@@ -131,77 +127,6 @@
                 (currentPath === '/index.html' && linkHref === '/')) {
                 link.setAttribute('aria-current', 'page');
                 link.classList.add('active');
-            }
-        });
-    }
-
-    // Initialize dropdown menus
-    function initializeDropdowns() {
-        const dropdowns = document.querySelectorAll('.dropdown > a'); // This selector targets dropdowns if they exist.
-                                                                    // The new header.html uses a mega-menu structure.
-                                                                    // This function might need adjustment if '.dropdown > a' is not the primary mechanism.
-                                                                    // However, header.html itself contains CSS for its mega-menu hover effects.
-                                                                    // This JS based dropdown logic might be for a different dropdown pattern.
-                                                                    // For now, keeping it won't harm if .dropdown isn't used in the new header.
-
-        dropdowns.forEach(dropdown => {
-            dropdown.addEventListener('click', function (e) {
-                e.preventDefault();
-                const expanded = this.getAttribute('aria-expanded') === 'true';
-
-                // Close all other dropdowns
-                dropdowns.forEach(otherDropdown => {
-                    if (otherDropdown !== this) {
-                        otherDropdown.setAttribute('aria-expanded', 'false');
-                        if (otherDropdown.parentElement) {
-                           otherDropdown.parentElement.classList.remove('open');
-                        }
-                    }
-                });
-
-                // Toggle current dropdown
-                this.setAttribute('aria-expanded', !expanded);
-                if (this.parentElement) {
-                    this.parentElement.classList.toggle('open');
-                }
-            });
-
-            // Handle keyboard navigation
-            dropdown.addEventListener('keydown', function (e) {
-                if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    this.click();
-                } else if (e.key === 'Escape') {
-                    this.setAttribute('aria-expanded', 'false');
-                    if (this.parentElement) {
-                        this.parentElement.classList.remove('open');
-                    }
-                    this.blur();
-                }
-            });
-        });
-
-        // Close dropdowns when clicking outside
-        document.addEventListener('click', function (e) {
-            if (!e.target.closest('.dropdown')) {
-                dropdowns.forEach(dropdown => {
-                    dropdown.setAttribute('aria-expanded', 'false');
-                     if (dropdown.parentElement) {
-                        dropdown.parentElement.classList.remove('open');
-                    }
-                });
-            }
-        });
-
-        // Close dropdowns on escape key
-        document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape') {
-                dropdowns.forEach(dropdown => {
-                    dropdown.setAttribute('aria-expanded', 'false');
-                    if (dropdown.parentElement) {
-                        dropdown.parentElement.classList.remove('open');
-                    }
-                });
             }
         });
     }
