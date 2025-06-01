@@ -17,12 +17,42 @@
     <!-- Preconnect for performance -->
     <link rel="preconnect" href="https://fonts.gstatic.com">
     
-    <!-- Styles -->
-    <link rel="stylesheet" href="/styles/variables.css">
-    <link rel="stylesheet" href="/styles/main.css">
-    <link rel="stylesheet" href="/styles/components.css">
-    <link rel="stylesheet" href="/styles/utilities.css">
+    <!-- Critical CSS inline -->
+    <style>
+      /* Inline only critical above-fold styles */
+      body { margin: 0; font-family: system-ui; }
+      .nav { background: var(--primary); color: white; }
+      .nav-container { max-width: var(--max-width-wide); margin: 0 auto; padding: var(--space-md); display: flex; justify-content: space-between; align-items: center; }
+      .nav-logo { color: white; text-decoration: none; font-weight: bold; font-size: var(--font-size-lg); }
+      .nav-links { display: none; } /* Hidden by default, shown by JS for mobile */
+      @media (min-width: 768px) {
+        .nav-links { display: flex; gap: var(--space-md); }
+        .nav-toggle { display: none; }
+      }
+      .main { padding: var(--space-md); max-width: var(--max-width); margin: var(--space-lg) auto; }
+      .footer { background: var(--bg-alt); padding: var(--space-lg) var(--space-md); border-top: 1px solid var(--border); }
+      .footer-container { max-width: var(--max-width-wide); margin: 0 auto; display: grid; gap: var(--space-lg); }
+      @media (min-width: 768px) {
+        .footer-container { grid-template-columns: repeat(3, 1fr); }
+      }
+    </style>
+
+    <!-- Async load non-critical CSS -->
+    <link rel="preload" href="/styles/main.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="/styles/variables.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="/styles/components.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="/styles/utilities.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+      <link rel="stylesheet" href="/styles/variables.css">
+      <link rel="stylesheet" href="/styles/main.css">
+      <link rel="stylesheet" href="/styles/components.css">
+      <link rel="stylesheet" href="/styles/utilities.css">
+    </noscript>
     <link rel="stylesheet" href="/styles/print.css" media="print">
+    
+    <!-- Resource hints -->
+    <link rel="dns-prefetch" href="https://www.opm.gov">
+    <link rel="preconnect" href="https://www.opm.gov">
     
     <!-- Favicons -->
     <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">

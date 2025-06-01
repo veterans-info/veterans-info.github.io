@@ -5,21 +5,66 @@
     "source": "OPM VetsGuide"
   },
   "sections": {
+    "overview": {
+      "id": "overview",
+      "title": "Welcome to the Veterans' Preference Guide",
+      "lastUpdated": "2024-01-01",
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "This guide provides comprehensive information about veterans' preference in federal employment."
+        },
+        {
+          "type": "paragraph",
+          "text": "Navigate through the sections to learn about eligibility, different preference types, required documentation, and an assessment tool to help determine your potential eligibility."
+        },
+        {
+          "type": "list",
+          "items": [
+            "Understand eligibility criteria",
+            "Explore various preference types (5-point, 10-point, etc.)",
+            "Identify necessary documentation for your application",
+            "Use the interactive assessment tool"
+          ]
+        }
+      ]
+    },
     "eligibility": {
+      "id": "eligibility",
       "title": "Eligibility Requirements",
       "lastUpdated": "2024-01-01",
-      "content": {
-        "overview": "...",
-        "requirements": [
-          {
-            "title": "Active Duty Service",
-            "description": "...",
-            "details": []
-          }
-        ],
-        "exceptions": [],
-        "relatedLinks": []
-      }
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "To be eligible for veterans' preference, you must meet certain criteria related to your military service."
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Active Duty Service"
+        },
+        {
+          "type": "paragraph",
+          "text": "Generally, you must have been honorably discharged from active duty in the U.S. Armed Forces."
+        },
+        {
+          "type": "list",
+          "items": [
+            "Served during a war",
+            "Served in a campaign or expedition for which a campaign badge has been authorized",
+            "Received an Armed Forces Expeditionary Medal or a Vietnam Service Medal"
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Disability Preference"
+        },
+        {
+          "type": "paragraph",
+          "text": "Veterans with service-connected disabilities may be eligible for 10-point preference."
+        }
+      ]
     }
   }
 }
