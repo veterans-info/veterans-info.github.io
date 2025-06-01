@@ -735,6 +735,242 @@
         }
     };
 
+    // Phase 5: Add Debugging and Validation Tools
+    const debugPanel = {
+        enabled: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1',
+        
+        showDebugInfo: () => {
+            if (!debugPanel.enabled) return;
+            
+            let debugDiv = document.getElementById('debug-panel');
+            if (!debugDiv) {
+                debugDiv = document.createElement('div');
+                debugDiv.id = 'debug-panel';
+                debugDiv.style.cssText = `
+                    position: fixed; 
+                    top: 10px; 
+                    right: 10px; 
+                    background: rgba(255, 255, 255, 0.9); 
+                    border: 1px solid #ccc; 
+                    padding: 10px; 
+                    z-index: 9999; 
+                    font-family: monospace; 
+                    font-size: 12px;
+                    max-height: 90%;
+                    overflow-y: auto;
+                    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                `;
+                document.body.appendChild(debugDiv);
+            }
+
+            const state = stateManager.state;
+            debugDiv.innerHTML = `
+                <h4>Debug Info</h4>
+                <p><strong>Current Question:</strong> ${state.currentQuestionId}</p>
+                <p><strong>Path Taken:</strong> ${state.debugInfo.pathTaken.join(' → ')}</p>
+                <p><strong>Answers:</strong></p>
+                <ul>${state.answerPath.map(a => `<li>${a.questionId}: ${a.answerText}</li>`).join('')}</ul>
+                ${state.debugInfo.warnings.length > 0 ? 
+                    `<p style="color: red;"><strong>Warnings:</strong> ${state.debugInfo.warnings.map(w => w.message || w.reason || JSON.stringify(w)).join(', ')}</p>` : 
+                    ''
+                }
+                <button onclick="debugPanel.exportPath()" style="margin-right: 5px;">Export Path</button>
+                <button onclick="debugPanel.validateTree()" style="margin-right: 5px;">Validate Tree</button>
+                <button onclick="testFramework.runTests()">Run Tests</button>
+            `;
+        },
+
+        exportPath: () => {
+            console.log('Exported Answer Path:', JSON.stringify(stateManager.state.answerPath, null, 2));
+            console.log('Exported Debug Info:', JSON.stringify(stateManager.state.debugInfo, null, 2));
+            alert('Path and Debug Info exported to console.');
+        },
+        
+        validateTree: () => {
+            const issues = [];
+            const visitedQuestions = new Set();
+            const recursionStack = new Set();
+
+            // Helper to check for orphaned references and basic structure
+            Object.keys(vetPreferenceTree).forEach(questionId => {
+                const question = vetPreferenceTree[questionId];
+                if (!question || !question.id) {
+                    issues.push(`Malformed question object for ID: ${questionId}`);
+                    return;
+                }
+
+                if (question.answers) {
+                    question.answers.forEach(answer => {
+                        if (answer.nextQuestionId && !vetPreferenceTree[answer.nextQuestionId]) {
+                            issues.push(`Question "${questionId}" references non-existent nextQuestionId: "${answer.nextQuestionId}"`);
+                        }
+                        if (answer.resultId && !resultGenerator.generateResult(stateManager.state.answerPath, answer.resultId)) {
+                            // This check is tricky as resultGenerator needs a full path to generate.
+                            // For now, just check if resultId is present.
+                        }
+                    });
+                }
+            });
+
+            // Helper for circular references (DFS)
+            function checkCircular(questionId) {
+                if (recursionStack.has(questionId)) {
+                    issues.push(`Circular reference detected involving: "${questionId}"`);
+                    return;
+                }
+                if (visitedQuestions.has(questionId)) {
+                    return;
+                }
+
+                visitedQuestions.add(questionId);
+                recursionStack.add(questionId);
+
+                const question = vetPreferenceTree[questionId];
+                if (question && question.answers) {
+                    for (const answer of question.answers) {
+                        if (answer.nextQuestionId) {
+                            checkCircular(answer.nextQuestionId);
+                        }
+                    }
+                }
+                recursionStack.delete(questionId);
+            }
+
+            // Start circular reference check from all possible entry points
+            // (e.g., 'START' and any other question that might be a direct jump target)
+            checkCircular('START');
+            // You might need to iterate through all questions if there are multiple entry points
+            // or if some questions are only reachable via conditional logic not covered by 'START'.
+            // For this tool, 'START' is the primary entry.
+
+            if (issues.length > 0) {
+                console.warn('Decision tree validation issues:', issues);
+                alert('Decision tree validation issues found! Check console for details.');
+            } else {
+                console.log('Decision tree validation passed');
+                alert('Decision tree validation passed!');
+            }
+        }
+    };
+
+    // 3. Add automated testing framework
+    const testFramework = {
+        testCases: [
+            {
+                name: '5-point veteran with wartime service (Honorable, Wartime, No Disability)',
+                path: [
+                    { questionId: 'START', answerText: 'For myself (I am a veteran or current service member)' },
+                    { questionId: 'VETERAN_STATUS', answerText: 'Discharged/Separated veteran' },
+                    { questionId: 'DISCHARGE_TYPE', answerText: 'Honorable' },
+                    { questionId: 'SERVICE_DATES', answerText: 'Wartime service (WWII, Korea, Vietnam, Gulf War, Iraq/Afghanistan)' },
+                    { questionId: 'VERIFY_WARTIME_PERIOD', answerText: 'Yes' },
+                    { questionId: 'DISABILITY_STATUS', answerText: 'No VA-rated service-connected disability and no Purple Heart' }
+                ],
+                expectedResultType: 'eligible-5-point'
+            },
+            {
+                name: '10-point veteran (30% disability)',
+                path: [
+                    { questionId: 'START', answerText: 'For myself (I am a veteran or current service member)' },
+                    { questionId: 'VETERAN_STATUS', answerText: 'Discharged/Separated veteran' },
+                    { questionId: 'DISCHARGE_TYPE', answerText: 'Honorable' },
+                    { questionId: 'DISABILITY_STATUS', answerText: 'Yes, rated 30% or more' } // Directly to disability status
+                ],
+                expectedResultType: 'eligible-10-point-cps'
+            },
+            {
+                name: 'Not Eligible (Peacetime, No Medal, No Disability)',
+                path: [
+                    { questionId: 'START', answerText: 'For myself (I am a veteran or current service member)' },
+                    { questionId: 'VETERAN_STATUS', answerText: 'Discharged/Separated veteran' },
+                    { questionId: 'DISCHARGE_TYPE', answerText: 'Honorable' },
+                    { questionId: 'SERVICE_DATES', answerText: 'Peacetime service only (no campaign medals)' },
+                    { questionId: 'DISABILITY_STATUS_PEACETIME_CHECK', answerText: 'No to both.' }
+                ],
+                expectedResultType: 'not-eligible'
+            },
+            {
+                name: 'Not Eligible (OTH Discharge)',
+                path: [
+                    { questionId: 'START', answerText: 'For myself (I am a veteran or current service member)' },
+                    { questionId: 'VETERAN_STATUS', answerText: 'Discharged/Separated veteran' },
+                    { questionId: 'DISCHARGE_TYPE', answerText: 'Other Than Honorable (OTH)' }
+                ],
+                expectedResultType: 'not-eligible'
+            },
+            {
+                name: 'Derivative Spouse (100% P&T)',
+                path: [
+                    { questionId: 'START', answerText: 'For a family member' },
+                    { questionId: 'FAMILY_RELATIONSHIP', answerText: 'Spouse or Unremarried Widow(er)' },
+                    { questionId: 'SPOUSE_ELIGIBILITY', answerText: 'The veteran is living and has a VA-certified service-connected disability that permanently and totally disqualifies them for employment along the general lines of their usual occupation (e.g., 100% P&T or IU).' }
+                ],
+                expectedResultType: 'eligible-10-point-derivative'
+            }
+            // Add more test cases as needed
+        ],
+        
+        runTests: async () => {
+            console.log('--- Running Automated Tests ---');
+            const results = [];
+            for (const testCase of testFramework.testCases) {
+                console.log(`Running test: "${testCase.name}"`);
+                stateManager.reset(); // Reset state for each test
+                let currentQuestionId = 'START';
+                let testPathAnswers = []; // To simulate answerPath for result generation
+
+                for (let i = 0; i < testCase.path.length; i++) {
+                    const step = testCase.path[i];
+                    const question = vetPreferenceTree[currentQuestionId];
+                    if (!question) {
+                        results.push({ name: testCase.name, passed: false, error: `Question "${currentQuestionId}" not found in tree.` });
+                        break;
+                    }
+
+                    const answerOption = question.answers.find(ans => ans.answerText === step.answerText);
+                    if (!answerOption) {
+                        results.push({ name: testCase.name, passed: false, error: `Answer "${step.answerText}" not found for question "${currentQuestionId}".` });
+                        break;
+                    }
+
+                    // Simulate state update
+                    testPathAnswers.push({
+                        questionId: currentQuestionId,
+                        answerText: answerOption.answerText,
+                        resultId: answerOption.resultId, // Include resultId if it's a terminal answer
+                        nextQuestionId: answerOption.nextQuestionId
+                    });
+                    currentQuestionId = answerOption.nextQuestionId || currentQuestionId; // Move to next question
+
+                    // If it's the last step and it's a result, generate result
+                    if (i === testCase.path.length - 1 && answerOption.resultId) {
+                        const generatedResult = resultGenerator.generateResult(testPathAnswers);
+                        const passed = generatedResult.type === testCase.expectedResultType;
+                        results.push({ name: testCase.name, passed: passed, actual: generatedResult.type, expected: testCase.expectedResultType });
+                    } else if (i === testCase.path.length - 1 && !answerOption.nextQuestionId) {
+                        // If it's the last step but not a result, and no next question, it's an incomplete path
+                        results.push({ name: testCase.name, passed: false, error: `Test path ended without a result or next question.` });
+                    }
+                }
+            }
+            console.log('--- Test Results Summary ---');
+            results.forEach(res => {
+                if (res.passed) {
+                    console.log(`✅ PASSED: ${res.name}`);
+                } else {
+                    console.error(`❌ FAILED: ${res.name}`);
+                    if (res.error) {
+                        console.error(`   Error: ${res.error}`);
+                    } else {
+                        console.error(`   Expected: ${res.expected}, Actual: ${res.actual}`);
+                    }
+                }
+            });
+            alert('Automated tests completed! Check console for results.');
+            return results;
+        }
+    };
+
     // 2. Add conditional question display (placeholder for now, actual implementation later)
     const questionConditions = {
         'DISABILITY_STATUS': [
@@ -831,6 +1067,9 @@
         if (elements.totalStepsText) {
             elements.totalStepsText.textContent = stateManager.state.totalSteps;
         }
+
+        // Show debug info if enabled
+        debugPanel.showDebugInfo();
     }
 
 
