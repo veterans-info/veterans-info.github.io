@@ -1,0 +1,68 @@
+/* components.css - Reusable patterns */
+
+/* Alert Component */
+.alert {
+  padding: var(--space-md);
+  border-radius: var(--radius);
+  border-left: 4px solid;
+  margin-bottom: var(--space-md);
+}
+
+.alert--info {
+  background-color: #E3F2FD;
+  border-color: var(--primary);
+  color: var(--primary-dark);
+}
+
+.alert--success {
+  background-color: #E8F5E9;
+  border-color: var(--success);
+  color: #1B5E20;
+}
+
+/* Collapsible Section */
+.collapsible {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: var(--space-md);
+}
+
+.collapsible__header {
+  padding: var(--space-md);
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.collapsible__content {
+  padding: 0 var(--space-md) var(--space-md);
+  display: none;
+}
+
+.collapsible--open .collapsible__content {
+  display: block;
+}
+
+/* Copy Button */
+.copy-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.copy-button:hover {
+  background: var(--border);
+}
+
+.copy-button--success {
+  background: var(--success);
+  color: white;
+}

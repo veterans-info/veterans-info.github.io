@@ -1,0 +1,25 @@
+{
+  "metadata": {
+    "lastUpdated": "2024-01-01",
+    "version": "2.0",
+    "source": "OPM VetsGuide"
+  },
+  "sections": {
+    "eligibility": {
+      "title": "Eligibility Requirements",
+      "lastUpdated": "2024-01-01",
+      "content": {
+        "overview": "...",
+        "requirements": [
+          {
+            "title": "Active Duty Service",
+            "description": "...",
+            "details": []
+          }
+        ],
+        "exceptions": [],
+        "relatedLinks": []
+      }
+    }
+  }
+}

@@ -1,0 +1,44 @@
+:root {
+  /* Colors - Extended Government Palette */
+  --primary: #0A2C5B;          /* Navy blue */
+  --primary-dark: #061A3A;     /* Darker navy */
+  --primary-light: #1A4A8A;    /* Lighter navy */
+  --secondary: #C41E3A;        /* Crimson */
+  --success: #2E7D32;          /* Green for eligible */
+  --warning: #ED6C02;          /* Orange for conditional */
+  --error: #D32F2F;            /* Red for ineligible */
+  --text: #212529;             /* Near black */
+  --text-muted: #6C757D;       /* Muted text */
+  --bg: #FFFFFF;               /* White */
+  --bg-alt: #F8F9FA;           /* Light gray */
+  --bg-highlight: #FFF9C4;     /* Highlight yellow */
+  --border: #DEE2E6;           /* Gray */
+  
+  /* Typography - Extended */
+  --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  --font-mono: "SF Mono", Monaco, "Inconsolata", "Fira Code", monospace;
+  --font-size-base: 1rem;
+  --font-size-sm: 0.875rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  
+  /* Spacing - Consistent Scale */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 2rem;
+  --space-xl: 4rem;
+  
+  /* Layout - Responsive Breakpoints */
+  --max-width: 65ch;           
+  --max-width-wide: 80ch;      
+  --breakpoint-sm: 576px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 992px;
+  
+  /* Effects */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+  --radius: 4px;
+  --transition: 150ms ease-in-out;
+}
