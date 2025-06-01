@@ -188,7 +188,6 @@
 }
 
 /* Result Area */
-/* Note: .tool-result also has base styles in style.css. These are tool-specific overrides/enhancements. */
 .tool-result {
     padding: 2rem;
     background: var(--bg-secondary); /* Default background for results */
@@ -196,47 +195,56 @@
     margin-bottom: 2rem;
     position: relative;
     overflow: hidden;
+    /* Added from style.css for basic structural styles */
+    margin-top: var(--space-3);
+    box-shadow: var(--shadow-subtle);
+}
+
+.tool-result.info {
+    background-color: var(--color-warning-bg); /* Using warning background for info */
+    border-left: 4px solid var(--primary-color); /* Using tool's primary color for info border */
+    color: var(--color-primary); /* General text color */
+}
+
+.tool-result.info h2 {
+    color: var(--primary-color); /* Using tool's primary color for info heading */
 }
 
 .tool-result.eligible-5-point,
 .tool-result.eligible-10-point,
 .tool-result.eligible-10-point-derivative,
-.tool-result.eligible-10-point-cps { /* Added CPS for completeness */
-    border: 2px solid var(--success-color);
-    background: var(--color-success-bg); /* Using variable from style.css */
-}
-
-.tool-result.not-eligible {
-    border: 2px solid var(--error-color);
-    background: var(--color-error-bg); /* Using variable from style.css */
-}
-
-.tool-result.complex,
-.tool-result.info { /* .info here uses warning colors, consistent with tool-disclaimer */
-    border: 2px solid var(--warning-color);
-    background: var(--color-warning-bg); /* Using variable from style.css */
-}
-
-.tool-result h2 { /* General h2 in results */
-    margin-bottom: 1rem;
-    /* Base color set by specific result type below */
+.tool-result.eligible-10-point-cps {
+    background-color: var(--color-success-bg);
+    border-left: 4px solid var(--success-color);
+    color: var(--color-primary);
 }
 
 .tool-result.eligible-5-point h2,
 .tool-result.eligible-10-point h2,
 .tool-result.eligible-10-point-derivative h2,
 .tool-result.eligible-10-point-cps h2 {
-    color: var(--color-success-text); /* Dark green for eligible titles */
+    color: var(--color-success-text);
 }
 
+.tool-result.not-eligible {
+    background-color: var(--color-error-bg);
+    border-left: 4px solid var(--error-color); /* Using tool's error color */
+    color: var(--color-primary);
+}
 
 .tool-result.not-eligible h2 {
-    color: var(--color-error-text); /* Dark red for not-eligible titles */
+    color: var(--color-error-text);
+}
+
+.tool-result.complex {
+    background-color: var(--color-neutral-100); /* Neutral for complex cases */
+    border-left: 4px solid var(--text-secondary); /* Using tool's neutral text color for border */
+    color: var(--color-primary);
 }
 
 .tool-result.complex h2,
-.tool-result.info h2 {
-    color: var(--color-warning-text); /* Dark yellow for complex/info titles */
+.tool-result.info h2 { /* Combined with info h2 as they share warning text color */
+    color: var(--color-warning-text);
 }
 
 .result-content {

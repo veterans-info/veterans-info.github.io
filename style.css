@@ -346,57 +346,12 @@ time {
 
 /* Tool Result Styles (General Fallbacks) */
 /* Specific tool result appearances are primarily in tool-styles.css */
+/* Keeping only basic structural styles in style.css */
 .tool-result {
     padding: var(--space-4);
     border-radius: 8px;
     margin-top: var(--space-3);
     box-shadow: var(--shadow-subtle);
-}
-
-.tool-result.info {
-    background-color: var(--color-warning-bg); /* Using warning background for info */
-    border-left: 4px solid var(--color-secondary); /* Keeping original border color */
-    color: var(--color-primary); 
-}
-
-.tool-result.info h2 {
-    color: var(--color-secondary); /* Keeping original heading color */
-}
-
-.tool-result.eligible-5-point,
-.tool-result.eligible-10-point,
-.tool-result.eligible-10-point-derivative,
-.tool-result.eligible-10-point-cps {
-    background-color: var(--color-success-bg);
-    border-left: 4px solid var(--success-color); /* Using success-color from tool-styles.css */
-    color: var(--color-primary); 
-}
-
-.tool-result.eligible-5-point h2,
-.tool-result.eligible-10-point h2,
-.tool-result.eligible-10-point-derivative h2,
-.tool-result.eligible-10-point-cps h2 {
-    color: var(--color-success-text);
-}
-
-.tool-result.not-eligible {
-    background-color: var(--color-error-bg);
-    border-left: 4px solid var(--color-accent);
-    color: var(--color-primary); 
-}
-
-.tool-result.not-eligible h2 {
-    color: var(--color-error-text);
-}
-
-.tool-result.complex {
-    background-color: var(--color-neutral-100); /* Neutral for complex cases */
-    border-left: 4px solid var(--color-neutral-700);
-    color: var(--color-primary); 
-}
-
-.tool-result.complex h2 {
-    color: var(--color-primary); 
 }
 
 /* Result Sections */
