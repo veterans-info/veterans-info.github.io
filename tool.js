@@ -13,9 +13,19 @@
     };
 
     // Decision tree structure
+
+    // 1. Separate concerns - create distinct question types
+    const questionTypes = {
+        SINGLE_CHOICE: 'single_choice',    // Standard radio-button style
+        MULTI_FACTOR: 'multi_factor',     // Questions that need multiple criteria
+        VALIDATION: 'validation',          // Verify previous answers
+        RESULT: 'result'                  // Terminal nodes
+    };
+
     const vetPreferenceTree = {
         'START': {
             id: 'START',
+            type: questionTypes.SINGLE_CHOICE, // Assign type to existing questions
             questionText: 'Are you seeking information about Veterans\' Preference for yourself or someone else?',
             answers: [
                 {
@@ -50,6 +60,7 @@
         
         'VETERAN_STATUS': {
             id: 'VETERAN_STATUS',
+            type: questionTypes.SINGLE_CHOICE,
             questionText: 'What is your current military service status?',
             answers: [
                 {
@@ -73,6 +84,7 @@
         
         'DISCHARGE_TYPE': {
             id: 'DISCHARGE_TYPE',
+            type: questionTypes.SINGLE_CHOICE,
             questionText: 'What type of discharge did you receive from military service?',
             helpText: 'Your discharge characterization is shown on your DD-214 or equivalent discharge documentation.',
             answers: [
@@ -123,43 +135,31 @@
         
         'SERVICE_DATES': {
             id: 'SERVICE_DATES',
-            questionText: 'When did you serve on active duty?',
-            helpText: 'Select all periods that apply to your service.',
+            type: questionTypes.SINGLE_CHOICE,
+            questionText: 'Which of these best describes your military service?',
+            helpText: 'Select the option that best matches your service period and type.',
             answers: [
                 {
-                    answerText: 'During a war, campaign, or expedition',
-                    nextQuestionId: 'DISABILITY_STATUS'
+                    answerText: 'Wartime service (WWII, Korea, Vietnam, Gulf War, Iraq/Afghanistan)',
+                    condition: 'wartime',
+                    nextQuestionId: 'VERIFY_WARTIME_PERIOD' // New question for wartime verification
                 },
                 {
-                    answerText: 'Served at least 180 consecutive days, any part after 9/11/80', // Covers Gulf War & Post-9/11 generally for non-disabled
-                    nextQuestionId: 'DISABILITY_STATUS'
-                },
-                 {
-                    answerText: 'Gulf War (Aug 2, 1990 - Jan 2, 1992)',
-                    nextQuestionId: 'DISABILITY_STATUS'
+                    answerText: 'Campaign or expedition with medal (any time period)',
+                    condition: 'campaign_medal',
+                    nextQuestionId: 'VERIFY_CAMPAIGN_MEDAL' // New question for campaign medal verification
                 },
                 {
-                    answerText: 'Only during peacetime before Sept 8, 1980 (officer) or Oct 15, 1976 (enlisted) AND without campaign medal',
-                    resultOutcome: {
-                        type: 'complex', // Changed from not-eligible to complex as disability can override
-                        title: 'Eligibility Depends on Other Factors',
-                        description: 'Peacetime service outside specific legislated periods typically does not qualify for Veterans\' Preference unless you have a service-connected disability or received a campaign/expeditionary medal.',
-                        additionalInfo: [
-                            'If you have a VA-rated service-connected disability, you may still be eligible for 10-point preference.',
-                            'If you received a campaign or expeditionary medal for this service, you may be eligible for 5-point preference.'
-                        ],
-                        nextQuestionId_if_applicable: 'DISABILITY_STATUS_PEACETIME_CHECK' // Hypothetical next step if we want to refine
-                    }
-                },
-                { // Added an option for "I'm not sure/Other" for robustness
-                    answerText: "I'm not sure / Other",
-                    nextQuestionId: 'DISABILITY_STATUS' // Default to checking disability, a common qualifier
+                    answerText: 'Peacetime service only (no campaign medals)',
+                    condition: 'peacetime',
+                    nextQuestionId: 'PEACETIME_SERVICE_CHECK' // Existing question, but now a direct path
                 }
             ]
         },
         
         'DISABILITY_STATUS': {
             id: 'DISABILITY_STATUS',
+            type: questionTypes.SINGLE_CHOICE, // Assign type
             questionText: 'Do you have a service-connected disability rated by the VA, or have you received a Purple Heart?',
             helpText: 'A service-connected disability is one that the VA has determined was caused or aggravated by your military service.',
             answers: [
@@ -230,6 +230,7 @@
         
         'FAMILY_RELATIONSHIP': {
             id: 'FAMILY_RELATIONSHIP',
+            type: questionTypes.SINGLE_CHOICE, // Assign type
             questionText: 'What is your relationship to the veteran?',
             helpText: 'Certain family members may be eligible for "derivative preference" based on the veteran\'s service.',
             answers: [
@@ -270,6 +271,7 @@
         
         'SPOUSE_ELIGIBILITY': {
             id: 'SPOUSE_ELIGIBILITY',
+            type: questionTypes.SINGLE_CHOICE, // Assign type
             questionText: 'Regarding the veteran you are related to, which of these situations applies?',
             helpText: 'Spouses or unremarried widow(er)s may be eligible for derivative preference under specific circumstances.',
             answers: [
@@ -334,10 +336,93 @@
                 }
             ]
         },
+        // New questions for Phase 1
+        'VERIFY_WARTIME_PERIOD': {
+            id: 'VERIFY_WARTIME_PERIOD',
+            type: questionTypes.SINGLE_CHOICE,
+            questionText: 'Did your wartime service include active duty during a war, campaign, or expedition for which a campaign badge or expeditionary medal was authorized?',
+            helpText: 'This includes WWII, Korea, Vietnam, Gulf War, Iraq/Afghanistan, or other specific campaigns.',
+            answers: [
+                {
+                    answerText: 'Yes',
+                    nextQuestionId: 'DISABILITY_STATUS' // Leads to disability check
+                },
+                {
+                    answerText: 'No',
+                    resultOutcome: {
+                        type: 'not-eligible',
+                        title: 'Not Eligible for Veterans\' Preference',
+                        description: 'Wartime service without a campaign badge or expeditionary medal generally does not qualify for Veterans\' Preference, unless you have a service-connected disability.'
+                    }
+                }
+            ]
+        },
+        'VERIFY_CAMPAIGN_MEDAL': {
+            id: 'VERIFY_CAMPAIGN_MEDAL',
+            type: questionTypes.SINGLE_CHOICE,
+            questionText: 'Did you receive a campaign badge or expeditionary medal for your service?',
+            helpText: 'Examples include the Afghanistan Campaign Medal, Iraq Campaign Medal, Global War on Terrorism Expeditionary Medal, etc.',
+            answers: [
+                {
+                    answerText: 'Yes',
+                    nextQuestionId: 'DISABILITY_STATUS' // Leads to disability check
+                },
+                {
+                    answerText: 'No',
+                    resultOutcome: {
+                        type: 'not-eligible',
+                        title: 'Not Eligible for Veterans\' Preference',
+                        description: 'Service without a campaign badge or expeditionary medal generally does not qualify for Veterans\' Preference, unless you have a service-connected disability.'
+                    }
+                }
+            ]
+        },
+        // New questions for Phase 1
+        'VERIFY_WARTIME_PERIOD': {
+            id: 'VERIFY_WARTIME_PERIOD',
+            type: questionTypes.SINGLE_CHOICE,
+            questionText: 'Did your wartime service include active duty during a war, campaign, or expedition for which a campaign badge or expeditionary medal was authorized?',
+            helpText: 'This includes WWII, Korea, Vietnam, Gulf War, Iraq/Afghanistan, or other specific campaigns.',
+            answers: [
+                {
+                    answerText: 'Yes',
+                    nextQuestionId: 'DISABILITY_STATUS' // Leads to disability check
+                },
+                {
+                    answerText: 'No',
+                    resultOutcome: {
+                        type: 'not-eligible',
+                        title: 'Not Eligible for Veterans\' Preference',
+                        description: 'Wartime service without a campaign badge or expeditionary medal generally does not qualify for Veterans\' Preference, unless you have a service-connected disability.'
+                    }
+                }
+            ]
+        },
+        'VERIFY_CAMPAIGN_MEDAL': {
+            id: 'VERIFY_CAMPAIGN_MEDAL',
+            type: questionTypes.SINGLE_CHOICE,
+            questionText: 'Did you receive a campaign badge or expeditionary medal for your service?',
+            helpText: 'Examples include the Afghanistan Campaign Medal, Iraq Campaign Medal, Global War on Terrorism Expeditionary Medal, etc.',
+            answers: [
+                {
+                    answerText: 'Yes',
+                    nextQuestionId: 'DISABILITY_STATUS' // Leads to disability check
+                },
+                {
+                    answerText: 'No',
+                    resultOutcome: {
+                        type: 'not-eligible',
+                        title: 'Not Eligible for Veterans\' Preference',
+                        description: 'Service without a campaign badge or expeditionary medal generally does not qualify for Veterans\' Preference, unless you have a service-connected disability.'
+                    }
+                }
+            ]
+        },
         // Placeholder for nodes that are referenced but not yet fully defined in the original snippet
         // These would need to be fleshed out similar to the above nodes.
         'ACTIVE_DUTY_STATUS': {
             id: 'ACTIVE_DUTY_STATUS',
+            type: questionTypes.SINGLE_CHOICE, // Assign type
             questionText: 'Are you within 120 days of separation or retirement (VOW Act eligible)?',
             answers: [
                 { answerText: 'Yes', resultOutcome: { type: 'info', title: 'Active Duty (VOW Act)', description: 'You can apply for federal jobs. You\'ll need a certification letter from your command and must provide DD-214 upon separation.' } },
@@ -346,6 +431,7 @@
         },
         'RETIREMENT_TYPE': {
             id: 'RETIREMENT_TYPE',
+            type: questionTypes.SINGLE_CHOICE, // Assign type
             questionText: 'What was your rank at retirement?',
             answers: [
                 { answerText: 'Below Major/Lt. Commander (O-4)', nextQuestionId: 'DISCHARGE_TYPE' }, // Assuming discharge type is still relevant for retirees if not disabled
@@ -354,6 +440,7 @@
         },
         'RETIRED_OFFICER_DISABILITY': {
             id: 'RETIRED_OFFICER_DISABILITY',
+            type: questionTypes.SINGLE_CHOICE, // Assign type
             questionText: 'Are you a disabled veteran (i.e., do you have a service-connected disability)?',
             answers: [
                 { answerText: 'Yes', nextQuestionId: 'DISABILITY_STATUS' }, // Go to general disability questions
@@ -362,6 +449,7 @@
         },
         'RESERVE_STATUS': {
             id: 'RESERVE_STATUS',
+            type: questionTypes.SINGLE_CHOICE, // Assign type
             questionText: 'Have you served on active duty (not active duty for training) under Title 10 or Title 32 (federally funded)?',
             answers: [
                 { answerText: 'Yes', nextQuestionId: 'DISCHARGE_TYPE' }, // If they had active duty periods
@@ -370,6 +458,7 @@
         },
         'RESERVE_DISABILITY_CHECK': {
             id: 'RESERVE_DISABILITY_CHECK',
+            type: questionTypes.SINGLE_CHOICE, // Assign type
             questionText: 'Did you incur or aggravate a disability during any period of military service (including training)?',
             answers: [
                 { answerText: 'Yes, and it is VA-rated service-connected', nextQuestionId: 'DISABILITY_STATUS'},
@@ -378,6 +467,7 @@
         },
         'ENTRY_LEVEL_SERVICE': {
             id: 'ENTRY_LEVEL_SERVICE',
+            type: questionTypes.SINGLE_CHOICE, // Assign type
             questionText: 'How long did you serve before receiving an Uncharacterized or Entry Level Separation?',
              helpText: 'This typically occurs within the first 180 days of service.',
             answers: [
@@ -388,6 +478,7 @@
         // Example of a more complex node that might be needed for SERVICE_DATES refinement
         'DISABILITY_STATUS_PEACETIME_CHECK': {
             id: 'DISABILITY_STATUS_PEACETIME_CHECK',
+            type: questionTypes.SINGLE_CHOICE, // Assign type
             questionText: 'Do you have a VA-rated service-connected disability or did you receive a campaign/expeditionary medal for that peacetime service?',
             answers: [
                 { answerText: 'Yes, I have a service-connected disability rated by VA.', nextQuestionId: 'DISABILITY_STATUS'}, // Re-route to the main disability path
@@ -409,6 +500,7 @@
         },
         'MOTHER_ELIGIBILITY': {
             id: 'MOTHER_ELIGIBILITY',
+            type: questionTypes.SINGLE_CHOICE, // Assign type
             questionText: 'Which situation applies to the veteran (your son or daughter)?',
             answers: [
                 {
@@ -427,6 +519,7 @@
         },
         'MOTHER_MARITAL_STATUS': {
             id: 'MOTHER_MARITAL_STATUS',
+            type: questionTypes.SINGLE_CHOICE, // Assign type
             questionText: 'What is your current marital status and relation to the veteran\'s father?',
             helpText: 'Eligibility for mothers has specific conditions related to marital status.',
             answers: [
@@ -461,6 +554,66 @@
         }
         // Ensure all nextQuestionId values point to a defined node in vetPreferenceTree
     };
+
+    // 1. Add answer validation system
+    const answerValidator = {
+        validatePath: (currentAnswers) => {
+            // Check for logical inconsistencies
+            const issues = [];
+            
+            // Example validation: Retired officer O-4+ without disability
+            if (currentAnswers.VETERAN_STATUS === 'Retired military' && 
+                currentAnswers.RETIREMENT_TYPE === 'Major/Lt. Commander (O-4) or above' &&
+                currentAnswers.RETIRED_OFFICER_DISABILITY === 'No') {
+                issues.push({
+                    type: 'not_eligible',
+                    reason: 'retired_officer_without_disability',
+                    message: 'Retired officers at O-4 or above are generally only eligible for Veterans\' Preference if they are disabled veterans.'
+                });
+            }
+            
+            // Add more validation rules as needed
+            // Example: If someone claims wartime service but then says no campaign medal and no disability
+            // This would be more complex as it depends on the full path, not just currentAnswers
+            // For now, focus on direct contradictions from currentAnswers map.
+
+            return issues;
+        }
+    };
+
+    // 2. Add conditional question display (placeholder for now, actual implementation later)
+    const questionConditions = {
+        'DISABILITY_STATUS': [
+            { 
+                when: 'DISCHARGE_TYPE',
+                equals: ['Honorable', 'General (Under Honorable Conditions)']
+            }
+        ],
+        'RETIREMENT_TYPE': [
+            {
+                when: 'VETERAN_STATUS',
+                equals: 'Retired military'
+            }
+        ]
+    };
+
+    function evaluateCondition(condition, currentAnswers) {
+        const answerValue = currentAnswers[condition.when];
+        if (condition.equals) {
+            return Array.isArray(condition.equals) ? condition.equals.includes(answerValue) : answerValue === condition.equals;
+        }
+        // Add other condition types (e.g., notEquals, greaterThan, lessThan) as needed
+        return true; // If no specific condition type, assume true
+    }
+
+    function shouldShowQuestion(questionId, currentAnswers) {
+        const conditions = questionConditions[questionId];
+        if (!conditions) return true; // No conditions, always show
+        
+        return conditions.every(condition => 
+            evaluateCondition(condition, currentAnswers)
+        );
+    }
 
     // DOM elements
     let elements = {};
@@ -631,10 +784,39 @@
             return;
         }
         
-        const question = vetPreferenceTree[questionId];
+        let question = vetPreferenceTree[questionId];
         if (!question) {
             console.error('Question not found:', questionId);
             if (elements.questionArea) elements.questionArea.innerHTML = '<p class="error-message">An error occurred. Please restart the tool.</p>';
+            return;
+        }
+
+        // Check if the question should be shown based on current answers
+        if (!shouldShowQuestion(questionId, state.answers)) {
+            console.log(`Skipping question ${questionId} due to conditional logic.`);
+            // If the question should not be shown, we need to find the next appropriate question.
+            // This is a simplified approach; a more robust solution might involve
+            // a more complex decision-making process to find the next valid question.
+            // For now, we'll assume that if a question is skipped, it means the path
+            // is invalid or leads to a specific outcome.
+            // This part needs careful consideration based on the overall flow.
+            // For the purpose of this phase, if a question is skipped, it implies
+            // an "not eligible" outcome for that path, or it should have been
+            // handled by the previous question's nextQuestionId logic.
+            // Given the current structure, if a question is conditionally hidden,
+            // it implies the user should not have reached it via the current path.
+            // We'll treat this as an "not eligible" scenario for now, or a flow error.
+            // A better approach would be to re-evaluate the next question based on the tree.
+
+            // For now, let's assume if a question is skipped, it means the path is invalid.
+            // This might need refinement based on how 'questionConditions' are used.
+            state.animating = false;
+            displayResult({
+                type: 'not-eligible',
+                title: 'Not Eligible for Veterans\' Preference',
+                description: 'Based on your previous answers, this path does not lead to Veterans\' Preference eligibility.',
+                additionalInfo: ['Please review your answers or consult official OPM guidance for more details.']
+            });
             return;
         }
 
@@ -760,13 +942,30 @@
             clickedButtonElement.classList.add('answer-clicked');
         }
         
-        if (state.answers[state.currentQuestionId] !== answer.answerText) { // Only advance if it's a new choice for this question
-            state.answers[state.currentQuestionId] = answer.answerText;
-            state.history.push(state.currentQuestionId);
-            state.currentStep = state.history.length; // currentStep is number of questions answered
-        } else if (!answer.nextQuestionId && !answer.resultOutcome) {
-             // If same answer is clicked which has no next step, avoid pushing to history again
-             // but allow processing if it leads to a result (e.g. informational clicks)
+        // Store the answer
+        state.answers[state.currentQuestionId] = answer.answerText;
+        state.history.push(state.currentQuestionId);
+        state.currentStep = state.history.length; // currentStep is number of questions answered
+
+        // Validate the current path
+        const validationIssues = answerValidator.validatePath(state.answers);
+        if (validationIssues.length > 0) {
+            // Handle validation issues, e.g., display a warning or force a specific result
+            console.warn("Validation issues detected:", validationIssues);
+            // For now, we'll just log. Later, we might display a specific result or message.
+            const issue = validationIssues[0]; // Take the first issue for now
+            if (issue.type === 'not_eligible') {
+                setTimeout(() => {
+                    state.animating = false;
+                    displayResult({
+                        type: 'not-eligible',
+                        title: 'Not Eligible for Veterans\' Preference',
+                        description: issue.message || 'Based on your answers, you do not appear to be eligible for Veterans\' Preference.',
+                        additionalInfo: ['Please review your answers or consult official OPM guidance for more details.']
+                    });
+                }, 200);
+                return; // Stop further processing
+            }
         }
 
 
