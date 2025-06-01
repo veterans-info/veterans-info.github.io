@@ -459,18 +459,66 @@
     }
 
     // Start the tool after accepting disclaimer
+    // UPDATED FUNCTION:
     function startTool() {
-        if (elements.disclaimer) {
-            fadeOut(elements.disclaimer, () => {
-                elements.disclaimer.classList.add('hidden');
-                if (elements.toolInterface) {
+        if (state.animating) return; // Prevent multiple clicks while animating
+
+        // The initial "disclaimer" content is in #question-area,
+        // and the "accept" button is in #answers-area.
+        // We need to fade these out before starting the actual tool questions.
+
+        state.animating = true; // Set animating flag
+
+        const elementsToFadeOut = [];
+        if (elements.questionArea && !elements.questionArea.classList.contains('hidden')) {
+            elementsToFadeOut.push(elements.questionArea);
+        }
+        // Only fade out answersArea if it contains the initial accept button
+        if (elements.answersArea && elements.answersArea.querySelector('#accept-disclaimer')) {
+            elementsToFadeOut.push(elements.answersArea);
+        }
+
+        if (elementsToFadeOut.length > 0) {
+            Promise.all(elementsToFadeOut.map(el => fadeOut(el))).then(() => {
+                // Clear out the initial content from these areas
+                if (elements.questionArea) elements.questionArea.innerHTML = '';
+                if (elements.answersArea) elements.answersArea.innerHTML = '';
+
+                // Ensure the main tool interface container is visible (it should be)
+                if (elements.toolInterface && elements.toolInterface.classList.contains('hidden')) {
                     elements.toolInterface.classList.remove('hidden');
-                    fadeIn(elements.toolInterface);
+                    // fadeIn(elements.toolInterface); // Not strictly necessary if it was never hidden
                 }
+                
+                // Show the progress bar now that the tool is starting
+                const progressContainer = document.querySelector('.tool-progress');
+                if (progressContainer && progressContainer.classList.contains('hidden')) {
+                    progressContainer.classList.remove('hidden');
+                    fadeIn(progressContainer);
+                }
+
                 displayQuestion('START');
+                // state.animating will be reset by displayQuestion
+            }).catch(error => {
+                console.error("Error fading out initial elements:", error);
+                // Fallback to attempting to display the question anyway.
+                displayQuestion('START');
+                state.animating = false; // Reset animating flag on error
             });
+        } else {
+            // This case should ideally not be hit if HTML is as expected
+            console.warn("Initial disclaimer elements not found or already hidden. Proceeding to display question.");
+             // Show the progress bar if it was hidden
+            const progressContainer = document.querySelector('.tool-progress');
+            if (progressContainer && progressContainer.classList.contains('hidden')) {
+                progressContainer.classList.remove('hidden');
+                fadeIn(progressContainer);
+            }
+            displayQuestion('START');
+            state.animating = false; // Reset in case it was somehow set
         }
     }
+    // END OF UPDATED FUNCTION
 
     // Display a question with animation
     function displayQuestion(questionId) {
