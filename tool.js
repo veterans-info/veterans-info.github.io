@@ -125,7 +125,7 @@
             id: 'SERVICE_DATES',
             questionText: 'When did you serve on active duty?',
             helpText: 'Select all periods that apply to your service.',
-            multiSelect: true, // Note: Current tool logic handles single select best. For multi-select, UI and `handleAnswer` would need larger changes. Assuming single informative selection for now.
+            // multiSelect: true, // Note: Current tool logic handles single select best. For multi-select, UI and `handleAnswer` would need larger changes. Assuming single informative selection for now.
             answers: [
                 {
                     answerText: 'During a war, campaign, or expedition',
@@ -468,11 +468,11 @@
 
     // Animation timing
     const ANIMATION_DURATION = 300;
+    const TOTAL_DEFINED_STEPS = 12; // Estimate based on the current tree depth/complexity
 
     // Initialize the tool
     function init() {
         elements = {
-            disclaimerTextContainer: document.querySelector('#question-area'), // Initial disclaimer text is here
             acceptButton: document.getElementById('accept-disclaimer'),
             toolInterface: document.getElementById('tool-interface'),
             questionArea: document.getElementById('question-area'), // Will be reused for questions
@@ -488,7 +488,6 @@
         };
 
         // Add fade-element class to elements that will be faded
-        elements.disclaimerTextContainer?.classList.add('fade-element');
         elements.questionArea?.classList.add('fade-element');
         elements.answersArea?.classList.add('fade-element');
         elements.resultArea?.classList.add('fade-element');
@@ -496,9 +495,8 @@
         elements.backButton?.classList.add('fade-element');
         elements.printButton?.classList.add('fade-element');
 
-        // ADD THE FOLLOWING to make initial disclaimer and accept button visible:
-        if (elements.disclaimerTextContainer) {
-            elements.disclaimerTextContainer.classList.add('is-visible');
+        if (elements.questionArea) {
+            elements.questionArea.classList.add('is-visible');
         }
         if (elements.answersArea) {
             elements.answersArea.classList.add('is-visible');
@@ -528,10 +526,7 @@
     }
 
     function countTotalSteps() {
-        // This is a simplified way to estimate. A more accurate way would be to find the longest path.
-        // For now, let's estimate based on the number of questions defined.
-        // A more robust method would traverse the tree.
-        return Object.keys(vetPreferenceTree).length > 5 ? 10 : 5; // Placeholder, adjust as tree grows.
+        return TOTAL_DEFINED_STEPS;
     }
 
 
@@ -596,11 +591,12 @@
     function startTool() {
         if (state.animating) return;
         state.animating = true;
+        setInteractiveElementsDisabled(true); // Disable elements at the start of animation
 
         const elementsToFadeOut = [];
         // Ensure we are targeting the correct initial elements for fade out
-        if (elements.disclaimerTextContainer && elements.disclaimerTextContainer.querySelector('h2').textContent === "Important Notice") {
-             elementsToFadeOut.push(elements.disclaimerTextContainer);
+        if (elements.questionArea && elements.questionArea.querySelector('h2').textContent === "Important Notice") {
+             elementsToFadeOut.push(elements.questionArea);
         }
         if (elements.answersArea && elements.answersArea.contains(elements.acceptButton)) {
             elementsToFadeOut.push(elements.answersArea); // Fade out the area containing the accept button
@@ -608,7 +604,7 @@
 
 
         Promise.all(elementsToFadeOut.map(el => fadeOut(el))).then(() => {
-            if (elements.disclaimerTextContainer) elements.disclaimerTextContainer.innerHTML = ''; // Clear disclaimer
+            if (elements.questionArea) elements.questionArea.innerHTML = ''; // Clear disclaimer
             if (elements.answersArea) elements.answersArea.innerHTML = ''; // Clear accept button
 
             if (elements.progressContainer && elements.progressContainer.classList.contains('hidden')) {
@@ -617,10 +613,12 @@
             }
             
             state.animating = false;
+            setInteractiveElementsDisabled(false); // Re-enable elements after animation
             displayQuestion('START');
         }).catch(error => {
             console.error("Error fading out initial elements:", error);
             state.animating = false;
+            setInteractiveElementsDisabled(false); // Re-enable elements on error
             displayQuestion('START'); // Attempt to display question anyway
         });
     }
@@ -707,6 +705,9 @@
                 }
             }
 
+            // Disable all interactive elements while animating
+            setInteractiveElementsDisabled(true);
+
             const fadeInPromises = [];
             if(elements.questionArea) fadeInPromises.push(fadeIn(elements.questionArea));
             if(elements.answersArea) fadeInPromises.push(fadeIn(elements.answersArea));
@@ -721,12 +722,29 @@
                         elements.questionArea.querySelector('h2')?.focus();
                     }
                     state.animating = false;
+                    setInteractiveElementsDisabled(false); // Re-enable after animation
                 }, 50); // Shorter delay after fade-in to set focus
+            }).catch(err => {
+                console.error("Error during question display transition:", err);
+                state.animating = false; // Ensure animating is reset on error
+                setInteractiveElementsDisabled(false); // Re-enable on error
             });
         }).catch(err => {
-            console.error("Error during question display transition:", err);
+            console.error("Error during question display transition (initial fadeOut):", err);
             state.animating = false; // Ensure animating is reset on error
+            setInteractiveElementsDisabled(false); // Re-enable on error
         });
+    }
+
+    // Helper function to disable/enable interactive elements
+    function setInteractiveElementsDisabled(disabled) {
+        const buttons = elements.answersArea?.querySelectorAll('button') || [];
+        buttons.forEach(button => button.disabled = disabled);
+        if (elements.acceptButton) elements.acceptButton.disabled = disabled;
+        if (elements.backButton) elements.backButton.disabled = disabled;
+        if (elements.restartButton) elements.restartButton.disabled = disabled;
+        // Print button can remain enabled or be disabled based on preference
+        // if (elements.printButton) elements.printButton.disabled = disabled;
     }
 
 
@@ -934,6 +952,7 @@
     function restartTool() {
         if (state.animating) return;
         state.animating = true; // Prevent clicks during restart transition
+        setInteractiveElementsDisabled(true); // Disable elements at the start of animation
 
         // Reset state
         state.currentQuestionId = null;
@@ -969,13 +988,16 @@
                         elements.acceptButton.focus(); // Set focus to the accept button
                     }
                     state.animating = false; // Reset after restart completion
+                    setInteractiveElementsDisabled(false); // Re-enable elements after animation
                 });
             } else {
                 state.animating = false; // Ensure animating is reset even if no elements to fade in
+                setInteractiveElementsDisabled(false); // Re-enable elements after animation
             }
         }).catch(err => {
             console.error("Error during tool restart:", err);
             state.animating = false; // Ensure reset on error
+            setInteractiveElementsDisabled(false); // Re-enable on error
         });
     }
 

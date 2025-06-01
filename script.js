@@ -24,49 +24,49 @@
             return Promise.resolve(); // Header already exists, resolve immediately
         }
 
-        // Try multiple possible paths for the header file
-        const headerPaths = ['header.html', './header.html', '/header.html'];
+        const headerPath = '/header.html'; // Absolute path for GitHub Pages root
         
-        return tryLoadFile(headerPaths)
+        return fetch(headerPath)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                return response.text();
+            })
             .then(data => {
-                // Look for header placeholder first
                 const headerPlaceholder = document.getElementById('header-placeholder');
                 if (headerPlaceholder) {
                     headerPlaceholder.innerHTML = data;
                 } else {
-                    // Insert header after skip link
                     const skipLink = document.querySelector('.skip-link');
                     if (skipLink) {
                         skipLink.insertAdjacentHTML('afterend', data);
                     } else {
-                        // Fallback: insert at beginning of body
                         document.body.insertAdjacentHTML('afterbegin', data);
                     }
                 }
-
-                // Set active page indicator after header is loaded
                 setActiveNavLink();
             })
             .catch(error => {
                 console.error('Error loading header:', error);
-                // console.log('Current location:', window.location.href); // Optional: for debugging
-                // Graceful fallback - site still works without dynamic header
             });
     }
 
-    // Load footer HTML
     function loadFooter() {
-        // Try multiple possible paths for the footer file
-        const footerPaths = ['footer.html', './footer.html', '/footer.html'];
+        const footerPath = '/footer.html'; // Absolute path for GitHub Pages root
         
-        return tryLoadFile(footerPaths)
+        return fetch(footerPath)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                return response.text();
+            })
             .then(data => {
-                // Look for footer placeholder first
                 const footerPlaceholder = document.getElementById('footer-placeholder');
                 if (footerPlaceholder) {
                     footerPlaceholder.innerHTML = data;
                 } else {
-                    // Fallback: inject before scripts or at end of body
                     const scripts = document.body.querySelectorAll('script');
                     const lastScript = scripts[scripts.length - 1];
                     if (lastScript && lastScript.parentNode === document.body) {
@@ -78,38 +78,7 @@
             })
             .catch(error => {
                 console.error('Error loading footer:', error);
-                // console.log('Current location:', window.location.href); // Optional: for debugging
             });
-    }
-
-    // Helper function to try loading files from multiple paths
-    function tryLoadFile(paths) {
-        let currentPathIndex = 0;
-        
-        function attemptLoad() {
-            if (currentPathIndex >= paths.length) {
-                return Promise.reject(new Error('All paths failed'));
-            }
-            
-            const currentPath = paths[currentPathIndex];
-            // console.log(`Attempting to load: ${currentPath}`); // Optional: for debugging
-            
-            return fetch(currentPath)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                    }
-                    // console.log(`Successfully loaded: ${currentPath}`); // Optional: for debugging
-                    return response.text();
-                })
-                .catch(error => {
-                    // console.log(`Failed to load ${currentPath}:`, error.message); // Optional: for debugging
-                    currentPathIndex++;
-                    return attemptLoad();
-                });
-        }
-        
-        return attemptLoad();
     }
 
     // Set active navigation link
