@@ -125,7 +125,6 @@
             id: 'SERVICE_DATES',
             questionText: 'When did you serve on active duty?',
             helpText: 'Select all periods that apply to your service.',
-            // multiSelect: true, // Note: Current tool logic handles single select best. For multi-select, UI and `handleAnswer` would need larger changes. Assuming single informative selection for now.
             answers: [
                 {
                     answerText: 'During a war, campaign, or expedition',
@@ -723,6 +722,10 @@
                     }
                     state.animating = false;
                     setInteractiveElementsDisabled(false); // Re-enable after animation
+                    // Announce new question for screen readers
+                    if (typeof announceToScreenReader === 'function') {
+                        announceToScreenReader(`New question: ${question.questionText}`);
+                    }
                 }, 50); // Shorter delay after fade-in to set focus
             }).catch(err => {
                 console.error("Error during question display transition:", err);
@@ -760,7 +763,7 @@
         if (state.answers[state.currentQuestionId] !== answer.answerText) { // Only advance if it's a new choice for this question
             state.answers[state.currentQuestionId] = answer.answerText;
             state.history.push(state.currentQuestionId);
-            state.currentStep = Math.min(state.history.length, state.totalSteps); // currentStep is number of questions answered
+            state.currentStep = state.history.length; // currentStep is number of questions answered
         } else if (!answer.nextQuestionId && !answer.resultOutcome) {
              // If same answer is clicked which has no next step, avoid pushing to history again
              // but allow processing if it leads to a result (e.g. informational clicks)
@@ -848,6 +851,10 @@
                 if (resultHeading) {
                     resultHeading.setAttribute('tabindex', '-1'); // Make it focusable
                     resultHeading.focus();
+                }
+                // Announce result for screen readers
+                if (typeof announceToScreenReader === 'function') {
+                    announceToScreenReader(`Result: ${result.title}. ${result.description}`);
                 }
             }
             setTimeout(() => { state.animating = false; }, ANIMATION_DURATION);

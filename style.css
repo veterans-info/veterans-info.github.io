@@ -18,6 +18,7 @@
     /* Color Palette */
     --color-primary: #333333; /* A common dark gray for text */
     --color-secondary: #0056b3; /* Updated: Was #1a73e8, now a more refined blue */
+    --color-secondary-rgb: 0, 86, 179; /* RGB values for --color-secondary */
     --color-secondary-darker: #004494; /* New: For hovers/focus on secondary elements */
     --color-accent: #ea4335; /* Bright red for errors, etc. */
     --color-neutral-100: #f8f9fa;

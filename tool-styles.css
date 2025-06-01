@@ -2,13 +2,6 @@
 
 /* Define CSS custom properties at the root */
 :root {
-    /* --primary-color: #003366; */ /* FROM: Dark blue */
-    --primary-color: #0056b3;      /* TO: Match --color-secondary from style.css for consistency */
-    --primary-color-rgb: 0, 86, 179; /* RGB values for --primary-color */
-    --success-color: #28a745;   /* Standard green, probably fine */
-    --error-color: #dc3545;     /* Standard red, probably fine */
-    --warning-color: #ffc107;   /* Standard yellow, probably fine */
-    
     --bg-primary: #ffffff;
     --bg-secondary: #f8f9fa;
     --bg-tertiary: #e9ecef;
@@ -29,8 +22,8 @@
 
 /* Disclaimer */
 .tool-disclaimer {
-    background: var(--warning-color); /* Standard light yellow for warning/info */
-    border: 2px solid var(--warning-color); /* Matches yellow */
+    background: var(--color-warning-bg); /* Standard light yellow for warning/info */
+    border: 2px solid var(--color-warning-text); /* Matches yellow */
     border-radius: var(--radius-md);
     padding: var(--space-4); /* 2rem -> var(--space-4) */
     margin-bottom: var(--space-4); /* 2rem -> var(--space-4) */
@@ -59,7 +52,7 @@
 
 .progress-bar {
     height: 8px;
-    background: var(--primary-color); /* Uses updated --primary-color */
+    background: var(--color-secondary); /* Uses updated --primary-color */
     border-radius: var(--radius-sm);
     transition: width var(--transition-normal) ease-out;
     width: 0%;
@@ -108,7 +101,7 @@
 .tool-question h2 {
     font-size: var(--font-size-lg); /* 1.5rem -> var(--font-size-lg) */
     margin-bottom: var(--space-2); /* 1rem -> var(--space-2) */
-    color: var(--primary-color); /* Uses updated --primary-color */
+    color: var(--color-secondary); /* Uses updated --primary-color */
 }
 
 .tool-question p { /* General paragraphs in question area */
@@ -117,12 +110,6 @@
 }
 
 
-.help-text { /* This class is also in style.css, ensure consistency or tool-specific override */
-    font-size: var(--font-size-sm); /* 0.875rem is close to 0.9rem (sm) */
-    color: var(--text-secondary);
-    font-style: italic;
-    margin-bottom: var(--space-2); /* 1rem -> var(--space-2) */
-}
 
 /* Answer Area */
 .tool-answers {
@@ -154,22 +141,22 @@
     width: 0;
     height: 0;
     border-radius: 50%;
-    background: rgba(var(--primary-color-rgb), 0.1); /* Using RGB variable for primary color */
+    background: rgba(var(--color-secondary-rgb), 0.1); /* Using RGB variable for primary color */
     transform: translate(-50%, -50%);
     transition: width 0.6s, height 0.6s;
 }
 
-.answer-option:hover::before {
-    width: 100%; /* Ripple effect size */
-    height: 100%;
-}
-
 .answer-option:hover,
 .answer-option:focus-visible { /* Using focus-visible */
-    border-color: var(--primary-color); /* Uses updated --primary-color */
+    border-color: var(--color-secondary); /* Uses updated --primary-color */
     background: var(--bg-secondary);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(var(--primary-color-rgb), 0.15); /* Using RGB variable for primary color */
+    box-shadow: 0 4px 12px rgba(var(--color-secondary-rgb), 0.15); /* Using RGB variable for primary color */
+}
+
+.answer-option:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(var(--color-secondary-rgb), 0.1);   /* Using RGB variable for primary color */
 }
 
 .answer-option:active {
@@ -202,12 +189,12 @@
 
 .tool-result.info {
     background-color: var(--color-warning-bg); /* Using warning background for info */
-    border-left: 4px solid var(--primary-color); /* Using tool's primary color for info border */
+    border-left: 4px solid var(--color-secondary); /* Using tool's primary color for info border */
     color: var(--color-primary); /* General text color */
 }
 
 .tool-result.info h2 {
-    color: var(--primary-color); /* Using tool's primary color for info heading */
+    color: var(--color-secondary); /* Using tool's primary color for info heading */
 }
 
 .tool-result.eligible-5-point,
@@ -215,7 +202,7 @@
 .tool-result.eligible-10-point-derivative,
 .tool-result.eligible-10-point-cps {
     background-color: var(--color-success-bg);
-    border-left: 4px solid var(--success-color);
+    border-left: 4px solid var(--color-success-text);
     color: var(--color-primary);
 }
 
@@ -228,7 +215,7 @@
 
 .tool-result.not-eligible {
     background-color: var(--color-error-bg);
-    border-left: 4px solid var(--error-color); /* Using tool's error color */
+    border-left: 4px solid var(--color-error-text); /* Using tool's error color */
     color: var(--color-primary);
 }
 
@@ -259,7 +246,7 @@
 .result-details h3 {
     font-size: var(--font-size-md); /* 1.25rem -> var(--font-size-md) */
     margin-bottom: var(--space-1); /* 0.5rem -> var(--space-1) */
-    color: var(--primary-color); /* Uses updated --primary-color */
+    color: var(--color-secondary); /* Uses updated --primary-color */
 }
 
 .result-documents {
@@ -295,7 +282,7 @@
 }
 
 .success-icon circle {
-    stroke: var(--success-color);
+    stroke: var(--color-success-text);
     stroke-width: 2;
     stroke-dasharray: 166;
     stroke-dashoffset: 166;
@@ -303,7 +290,7 @@
 }
 
 .success-icon path {
-    stroke: var(--success-color);
+    stroke: var(--color-success-text);
     stroke-width: 3;
     stroke-linecap: round;
     stroke-linejoin: round;
@@ -403,7 +390,7 @@
 }
 
 .tool-help a { /* Ensure links in help section follow tool's primary color if needed */
-    color: var(--primary-color); /* Uses updated --primary-color */
+    color: var(--color-secondary); /* Uses updated --primary-color */
 }
 .tool-help a:hover {
     text-decoration: underline;
@@ -412,7 +399,7 @@
 
 /* Focus styles for keyboard navigation */
 .answer-option:focus-visible { /* Using focus-visible */
-    outline: 3px solid var(--primary-color); /* Uses updated --primary-color */
+    outline: 3px solid var(--color-secondary-darker); /* Uses updated --primary-color */
     outline-offset: 2px;
     /* box-shadow remains from hover/focus-visible above */
 }
@@ -420,7 +407,7 @@
 /* General button focus in tool.html context uses .btn:focus-visible from style.css */
 /* The following is a fallback or for non-.btn buttons if any appear in the tool */
 button:not(.btn):focus-visible {
-    outline: 3px solid var(--primary-color);
+    outline: 3px solid var(--color-secondary-darker);
     outline-offset: 2px;
 }
 

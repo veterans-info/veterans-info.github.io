@@ -49,7 +49,7 @@ The Veterans' Preference Guide is meticulously based on the official [OPM Vet Gu
   - Derivative Preference for spouses, widows/widowers, and mothers
 
 ### 🛠️ Interactive Tools
-- **Step-by-Step Eligibility Checker:** Navigate through questions to determine potential eligibility
+- **Step-by-Step Eligibility Checker:** Navigate through questions to determine potential eligibility. Recently enhanced for improved visibility and accessibility.
 - **Document Checklist Generator:** Get a personalized list of required documents
 - **Preference Point Calculator:** Understand how points are awarded
 

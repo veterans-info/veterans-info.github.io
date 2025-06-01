@@ -29,13 +29,13 @@
           <!-- Question Area -->
           <div id="question-area" class="tool-question">
             <!-- Initial disclaimer as first question -->
-            <h2>Important Notice</h2>
+            <h2 id="question-heading">Important Notice</h2>
             <p><strong>This tool provides guidance based on the OPM Vet Guide for HR Professionals. It is for informational purposes only and is NOT an official determination of eligibility or a legal document.</strong></p>
             <p>Always refer to official OPM documentation and consult with your agency's HR department or a Veterans Service Officer for definitive determinations.</p>
           </div>
           
           <!-- Answer Area -->
-          <div id="answers-area" class="tool-answers" role="radiogroup">
+          <div id="answers-area" class="tool-answers" role="group" aria-labelledby="question-heading">
             <!-- Initial button to start -->
             <button id="accept-disclaimer" class="btn btn-primary">I Understand - Continue</button>
           </div>
