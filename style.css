@@ -681,6 +681,90 @@ time {
     }
 }
 
+/* --- Utility Styles --- */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+/* --- Footer Styles --- */
+footer {
+    background-color: #333; /* Kept original very dark footer background */
+    color: #fff;
+    padding: 2rem 0 1rem 0;
+    margin-top: 2rem;
+}
+
+.footer-content {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 20px;
+    text-align: center; /* Centering links as per footer.html structure */
+}
+
+/* Styles for .footer-content a tags as per footer.html structure */
+.footer-content a {
+    color: #ccc;
+    text-decoration: none;
+    margin: 0 0.5em; /* Spacing for links */
+}
+
+.footer-content a:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+
+/* Separator styling for footer, if needed from JS (footer.html has spans) */
+.footer-content .separator {
+    margin: 0 0.25em;
+    color: #777;
+}
+
+.footer-bottom {
+    max-width: 960px;
+    margin: 2rem auto 0 auto;
+    padding: 1rem 20px 0 20px;
+    border-top: 1px solid #555;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #ccc;
+}
+
+/* Mobile Navigation and Footer Adjustments */
+@media (max-width: 768px) {
+    /* Mobile nav rules for .menu-toggle or specific mobile nav structures would go here if needed */
+    /* The header.html has its own responsive CSS. */
+                                
+    .footer-content {
+        /* grid-template-columns: 1fr; */ /* Removed as grid is not used */
+        /* gap: 1.5rem; */ /* Gap is not relevant for text-align:center flow */
+        padding: 0 15px; 
+    }
+
+    .footer-content a {
+        display: inline-block; /* Keeps links on same line if space allows */
+        margin: 0.25em 0.5em; /* Adjust margin for better mobile spacing if they wrap */
+    }
+
+    /* Footer links might stack naturally or based on .footer-content text-align.
+       If more specific stacking and centering needed for links on mobile:
+    .footer-content a {
+        display: block;
+        margin: 0.5rem 0;
+    }
+    .footer-content .separator {
+        display: none; // Hide separators if links are stacked
+    }
+    */
+}
+
 /* Print Styles */
 @media print {
     body {
