@@ -2,14 +2,95 @@
 (function() {
     'use strict';
 
-    // State management
-    const state = {
-        currentQuestionId: null,
-        history: [],
-        answers: {},
-        totalSteps: 0,
-        currentStep: 0,
-        animating: false
+    // Centralized State Management
+    const stateManager = {
+        state: {
+            currentQuestionId: null,
+            answerPath: [],           // Array of {questionId, answerId, answerText}
+            answers: {},              // Map of questionId -> answerText for quick lookup
+            computedEligibility: null,
+            debugInfo: {
+                pathTaken: [],
+                decisionsSkipped: [],
+                warnings: []
+            },
+            totalSteps: 0, // Will be set during init
+            currentStep: 0,
+            animating: false
+        },
+
+        // Initialize state with total steps
+        init: function(totalSteps) {
+            this.state.totalSteps = totalSteps;
+            this.state.currentQuestionId = null;
+            this.state.answerPath = [];
+            this.state.answers = {};
+            this.state.computedEligibility = null;
+            this.state.debugInfo = {
+                pathTaken: [],
+                decisionsSkipped: [],
+                warnings: []
+            };
+            this.state.currentStep = 0;
+            this.state.animating = false;
+        },
+        
+        // Advance to a new question, recording the answer
+        advanceToQuestion: function(questionId, answeredQuestionId = null, answerText = null) {
+            if (answeredQuestionId && answerText) {
+                this.state.answerPath.push({
+                    questionId: answeredQuestionId,
+                    answerText: answerText,
+                    timestamp: Date.now()
+                });
+                this.state.answers[answeredQuestionId] = answerText; // Update answers map
+            }
+            
+            this.state.currentQuestionId = questionId;
+            this.state.debugInfo.pathTaken.push(questionId);
+            this.state.currentStep = this.state.answerPath.length; // Number of questions answered
+            this.validateCurrentState();
+        },
+        
+        // Go back one step in the history
+        goBack: function() {
+            if (this.state.answerPath.length === 0) return false;
+            
+            const lastAnswer = this.state.answerPath.pop();
+            delete this.state.answers[lastAnswer.questionId]; // Remove answer from map
+            
+            this.state.currentQuestionId = this.state.answerPath.length > 0 
+                ? this.state.answerPath[this.state.answerPath.length - 1].questionId 
+                : 'START';
+            this.state.currentStep = this.state.answerPath.length;
+            this.state.debugInfo.pathTaken.pop(); // Remove last question from debug path
+            this.validateCurrentState(); // Re-validate state after going back
+            return true;
+        },
+
+        // Reset the state to initial values
+        reset: function() {
+            this.init(this.state.totalSteps); // Re-initialize with the same total steps
+        },
+
+        // Validate the current state based on answers
+        validateCurrentState: function() {
+            this.state.debugInfo.warnings = []; // Clear previous warnings
+            const issues = answerValidator.validatePath(this.state.answers);
+            if (issues.length > 0) {
+                this.state.debugInfo.warnings.push(...issues);
+            }
+        },
+
+        // Get a copy of the current answers map
+        getAnswersMap: function() {
+            return { ...this.state.answers };
+        },
+
+        // Set animating status
+        setAnimating: function(status) {
+            this.state.animating = status;
+        }
     };
 
     // Decision tree structure
@@ -620,7 +701,7 @@
 
     // Animation timing
     const ANIMATION_DURATION = 300;
-    const TOTAL_DEFINED_STEPS = 12; // Estimate based on the current tree depth/complexity
+    const TOTAL_DEFINED_STEPS = 12; // Estimate based on the current tree depth/complexity (will be passed to stateManager)
 
     // Initialize the tool
     function init() {
@@ -671,19 +752,17 @@
         }
 
         document.addEventListener('keydown', handleKeyboardNavigation);
-        state.totalSteps = countTotalSteps(); // Estimate total steps
+        
+        // Initialize stateManager
+        stateManager.init(TOTAL_DEFINED_STEPS); 
         if (elements.totalStepsText) {
-            elements.totalStepsText.textContent = state.totalSteps;
+            elements.totalStepsText.textContent = stateManager.state.totalSteps;
         }
-    }
-
-    function countTotalSteps() {
-        return TOTAL_DEFINED_STEPS;
     }
 
 
     function handleKeyboardNavigation(event) {
-        if (state.animating) return;
+        if (stateManager.state.animating) return;
 
         const answerButtons = elements.answersArea ? Array.from(elements.answersArea.querySelectorAll('.answer-option:not([disabled])')) : [];
         if (answerButtons.length === 0 && event.target.id !== 'accept-disclaimer') return;
@@ -732,7 +811,7 @@
                 break;
             
             case 'Escape':
-                if (state.history.length > 0 && elements.backButton && !elements.backButton.classList.contains('hidden')) {
+                if (stateManager.state.answerPath.length > 0 && elements.backButton && !elements.backButton.classList.contains('hidden')) {
                     event.preventDefault();
                     goBack();
                 }
@@ -741,8 +820,8 @@
     }
     
     function startTool() {
-        if (state.animating) return;
-        state.animating = true;
+        if (stateManager.state.animating) return;
+        stateManager.setAnimating(true);
         setInteractiveElementsDisabled(true); // Disable elements at the start of animation
 
         const elementsToFadeOut = [];
@@ -764,12 +843,12 @@
                 fadeIn(elements.progressContainer);
             }
             
-            state.animating = false;
+            stateManager.setAnimating(false);
             setInteractiveElementsDisabled(false); // Re-enable elements after animation
             displayQuestion('START');
         }).catch(error => {
             console.error("Error fading out initial elements:", error);
-            state.animating = false;
+            stateManager.setAnimating(false);
             setInteractiveElementsDisabled(false); // Re-enable elements on error
             displayQuestion('START'); // Attempt to display question anyway
         });
@@ -777,8 +856,8 @@
 
 
     function displayQuestion(questionId) {
-        if (state.animating && state.currentQuestionId === questionId) return; // Prevent re-triggering for the same question if already animating it
-        if (state.animating && state.currentQuestionId !== questionId) {
+        if (stateManager.state.animating && stateManager.state.currentQuestionId === questionId) return; // Prevent re-triggering for the same question if already animating it
+        if (stateManager.state.animating && stateManager.state.currentQuestionId !== questionId) {
             // If animating something else, queue or wait. For simplicity, we'll just block.
              console.warn("Animation in progress, blocking new question display for:", questionId);
             return;
@@ -792,7 +871,7 @@
         }
 
         // Check if the question should be shown based on current answers
-        if (!shouldShowQuestion(questionId, state.answers)) {
+        if (!shouldShowQuestion(questionId, stateManager.getAnswersMap())) {
             console.log(`Skipping question ${questionId} due to conditional logic.`);
             // If the question should not be shown, we need to find the next appropriate question.
             // This is a simplified approach; a more robust solution might involve
@@ -808,9 +887,7 @@
             // We'll treat this as an "not eligible" scenario for now, or a flow error.
             // A better approach would be to re-evaluate the next question based on the tree.
 
-            // For now, let's assume if a question is skipped, it means the path is invalid.
-            // This might need refinement based on how 'questionConditions' are used.
-            state.animating = false;
+            stateManager.setAnimating(false);
             displayResult({
                 type: 'not-eligible',
                 title: 'Not Eligible for Veterans\' Preference',
@@ -820,19 +897,21 @@
             return;
         }
 
-        state.animating = true;
-        state.currentQuestionId = questionId; // Set current question ID early
-        
-        if(state.history[state.history.length-1] !== questionId && questionId !== 'START') {
-            // This logic might need adjustment if we are not pushing to history BEFORE displayQuestion
-            // For now assume if we are going forward, step increases.
-            // state.currentStep = Math.min(state.currentStep + 1, state.totalSteps); 
-        }
-        // If it's the first question after START, currentStep should be 1.
-        // CurrentStep update is now better handled in handleAnswer for forward, and goBack for backward.
-        // For initial START, currentStep is 0, after first answer it becomes 1.
-        if (questionId === 'START' && state.history.length === 0) {
-            state.currentStep = 0; // Special case for the very first display (progress bar starts before first answer)
+        stateManager.setAnimating(true);
+        // Use stateManager.advanceToQuestion to update currentQuestionId and history
+        // For initial START, we just set the currentQuestionId, no answer to record yet.
+        if (questionId === 'START' && stateManager.state.answerPath.length === 0) {
+            stateManager.state.currentQuestionId = questionId;
+            stateManager.state.debugInfo.pathTaken.push(questionId);
+            stateManager.state.currentStep = 0; // Special case for the very first display (progress bar starts before first answer)
+        } else {
+            // If we are displaying a question that is not START, and it's not a back navigation,
+            // then advanceToQuestion should have been called by handleAnswer.
+            // If this is a direct call to displayQuestion (e.g., from goBack), stateManager.currentQuestionId is already set.
+            // We only need to ensure currentQuestionId is correctly set if this is the first question.
+            // The advanceToQuestion handles setting currentQuestionId and currentStep for forward movement.
+            // For displayQuestion, we just need to ensure stateManager.currentQuestionId is correct.
+            stateManager.state.currentQuestionId = questionId;
         }
 
 
@@ -879,7 +958,7 @@
             }
             
             if (elements.backButton) {
-                if (state.history.length > 0) {
+                if (stateManager.state.answerPath.length > 0) {
                     elements.backButton.classList.remove('hidden');
                 } else {
                     elements.backButton.classList.add('hidden');
@@ -902,7 +981,7 @@
                         // If no answer options (e.g., info-only question), focus the question heading
                         elements.questionArea.querySelector('h2')?.focus();
                     }
-                    state.animating = false;
+                    stateManager.setAnimating(false);
                     setInteractiveElementsDisabled(false); // Re-enable after animation
                     // Announce new question for screen readers
                     if (typeof announceToScreenReader === 'function') {
@@ -911,12 +990,12 @@
                 }, 50); // Shorter delay after fade-in to set focus
             }).catch(err => {
                 console.error("Error during question display transition:", err);
-                state.animating = false; // Ensure animating is reset on error
+                stateManager.setAnimating(false); // Ensure animating is reset on error
                 setInteractiveElementsDisabled(false); // Re-enable on error
             });
         }).catch(err => {
             console.error("Error during question display transition (initial fadeOut):", err);
-            state.animating = false; // Ensure animating is reset on error
+            stateManager.setAnimating(false); // Ensure animating is reset on error
             setInteractiveElementsDisabled(false); // Re-enable on error
         });
     }
@@ -934,21 +1013,19 @@
 
 
     function handleAnswer(answer, clickedButtonElement) {
-        if (state.animating) return;
+        if (stateManager.state.animating) return;
 
-        state.animating = true; // This action (handleAnswer) is now an animating sequence
+        stateManager.setAnimating(true); // This action (handleAnswer) is now an animating sequence
 
         if (clickedButtonElement) {
             clickedButtonElement.classList.add('answer-clicked');
         }
         
-        // Store the answer
-        state.answers[state.currentQuestionId] = answer.answerText;
-        state.history.push(state.currentQuestionId);
-        state.currentStep = state.history.length; // currentStep is number of questions answered
+        // Advance state and store the answer
+        stateManager.advanceToQuestion(answer.nextQuestionId || stateManager.state.currentQuestionId, stateManager.state.currentQuestionId, answer.answerText);
 
         // Validate the current path
-        const validationIssues = answerValidator.validatePath(state.answers);
+        const validationIssues = answerValidator.validatePath(stateManager.getAnswersMap());
         if (validationIssues.length > 0) {
             // Handle validation issues, e.g., display a warning or force a specific result
             console.warn("Validation issues detected:", validationIssues);
@@ -956,7 +1033,7 @@
             const issue = validationIssues[0]; // Take the first issue for now
             if (issue.type === 'not_eligible') {
                 setTimeout(() => {
-                    state.animating = false;
+                    stateManager.setAnimating(false);
                     displayResult({
                         type: 'not-eligible',
                         title: 'Not Eligible for Veterans\' Preference',
@@ -970,13 +1047,13 @@
 
 
         setTimeout(() => {
-            state.animating = false; 
+            stateManager.setAnimating(false); 
 
             if (answer.nextQuestionId) {
                 displayQuestion(answer.nextQuestionId);
             } else if (answer.resultOutcome) {
                 // Before displaying result, ensure currentStep reflects being at the end.
-                state.currentStep = state.totalSteps;
+                stateManager.state.currentStep = stateManager.state.totalSteps;
                 displayResult(answer.resultOutcome);
             } else {
                 console.warn('Answer does not lead to a next question or result:', answer);
@@ -987,8 +1064,8 @@
 
 
     function displayResult(result) {
-        if (state.animating) return;
-        state.animating = true;
+        if (stateManager.state.animating) return;
+        stateManager.setAnimating(true);
 
         // state.currentStep should be totalSteps when result is shown
         updateProgress(); // Ensure progress bar is full
@@ -1056,15 +1133,15 @@
                     announceToScreenReader(`Result: ${result.title}. ${result.description}`);
                 }
             }
-            setTimeout(() => { state.animating = false; }, ANIMATION_DURATION);
+            setTimeout(() => { stateManager.setAnimating(false); }, ANIMATION_DURATION);
         }).catch(err => {
             console.error("Error during result display transition:", err);
-            state.animating = false;
+            stateManager.setAnimating(false);
         });
     }
 
     function updateProgress() {
-        const progress = state.totalSteps > 0 ? (state.currentStep / state.totalSteps) * 100 : 0;
+        const progress = stateManager.state.totalSteps > 0 ? (stateManager.state.currentStep / stateManager.state.totalSteps) * 100 : 0;
 
         if (elements.progressBar) {
             elements.progressBar.style.width = `${Math.min(progress, 100)}%`; // Cap at 100%
@@ -1073,13 +1150,13 @@
             // Animate number change for currentStepText
              const currentDisplayedStep = parseInt(elements.currentStepText.textContent) || 0;
              // Only animate if the value is actually changing
-             if (currentDisplayedStep !== state.currentStep) {
-                animateValue(elements.currentStepText, currentDisplayedStep, state.currentStep, ANIMATION_DURATION);
+             if (currentDisplayedStep !== stateManager.state.currentStep) {
+                animateValue(elements.currentStepText, currentDisplayedStep, stateManager.state.currentStep, ANIMATION_DURATION);
              } else {
                  // If not animating, set directly, ensuring it doesn't exceed totalSteps
-                 elements.currentStepText.textContent = Math.min(state.currentStep, state.totalSteps);
+                 elements.currentStepText.textContent = Math.min(stateManager.state.currentStep, stateManager.state.totalSteps);
              }
-             elements.totalStepsText.textContent = state.totalSteps;
+             elements.totalStepsText.textContent = stateManager.state.totalSteps;
         }
         
         const progressContainer = elements.progressContainer;
@@ -1138,33 +1215,22 @@
     }
 
     function goBack() {
-        if (state.animating || state.history.length === 0) return;
+        if (stateManager.state.animating) return;
         
-        // Remove the current question from history and its answer
-        const currentQuestionId = state.history.pop();
-        delete state.answers[currentQuestionId];
-
-        // Determine the ID of the question to go back to
-        const previousQuestionId = state.history.length > 0 ? state.history[state.history.length - 1] : 'START';
-        
-        // Update current step based on history length
-        state.currentStep = state.history.length;
-        
-        // Display the previous question. displayQuestion will handle focus.
-        displayQuestion(previousQuestionId);
+        const wentBack = stateManager.goBack();
+        if (wentBack) {
+            // Display the previous question. displayQuestion will handle focus.
+            displayQuestion(stateManager.state.currentQuestionId);
+        }
     }
 
 
     function restartTool() {
-        if (state.animating) return;
-        state.animating = true; // Prevent clicks during restart transition
+        if (stateManager.state.animating) return;
+        stateManager.setAnimating(true); // Prevent clicks during restart transition
         setInteractiveElementsDisabled(true); // Disable elements at the start of animation
 
-        // Reset state
-        state.currentQuestionId = null;
-        state.history = [];
-        state.answers = {};
-        state.currentStep = 0;
+        stateManager.reset(); // Reset state using the stateManager
         
         const uiElementsToReset = [elements.questionArea, elements.answersArea, elements.resultArea, elements.printButton];
         if (elements.progressContainer) elements.progressContainer.classList.add('hidden'); // Hide progress bar immediately
@@ -1193,16 +1259,16 @@
                     if (elements.acceptButton) {
                         elements.acceptButton.focus(); // Set focus to the accept button
                     }
-                    state.animating = false; // Reset after restart completion
+                    stateManager.setAnimating(false); // Reset after restart completion
                     setInteractiveElementsDisabled(false); // Re-enable elements after animation
                 });
             } else {
-                state.animating = false; // Ensure animating is reset even if no elements to fade in
+                stateManager.setAnimating(false); // Ensure animating is reset even if no elements to fade in
                 setInteractiveElementsDisabled(false); // Re-enable elements after animation
             }
         }).catch(err => {
             console.error("Error during tool restart:", err);
-            state.animating = false; // Ensure reset on error
+            stateManager.setAnimating(false); // Ensure reset on error
             setInteractiveElementsDisabled(false); // Re-enable on error
         });
     }
