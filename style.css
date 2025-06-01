@@ -16,7 +16,8 @@
     --font-size-3xl: 3.052rem;
     
     /* Color Palette */
-    --color-primary: #0A0E27;
+    /* --color-primary: #0A0E27; */ /* FROM */
+    --color-primary: #333333; /* TO: A common dark gray for text */
     --color-secondary: #1a73e8;
     --color-accent: #ea4335;
     --color-neutral-100: #f8f9fa;
@@ -176,20 +177,21 @@ time {
     place-items: center;
     min-height: 400px;
     padding: var(--space-6) var(--space-4);
-    background: linear-gradient(135deg, var(--color-primary) 0%, #1a2347 100%);
+    /* background: linear-gradient(135deg, var(--color-primary) 0%, #1a2347 100%); */ /* FROM */
+    background: linear-gradient(135deg, #6b7a8f 0%, #4a5568 100%); /* TO: More subtle gray/blue */
     color: white;
     border-radius: 12px;
     text-align: center;
     box-shadow: var(--shadow-medium);
 }
 
-.hero h2 {
+.hero h2 { /* Note: index.html hero uses h1, not h2. This style might be for other pages or can be adapted. */
     color: white;
     margin-top: 0;
     margin-bottom: var(--space-3);
 }
 
-.hero p {
+.hero p { /* This will style .hero-subtitle in index.html */
     font-size: var(--font-size-md);
     opacity: 0.9;
     max-width: 600px;
@@ -235,12 +237,12 @@ time {
 
 .btn-secondary {
     background-color: white;
-    color: var(--color-primary);
+    color: var(--color-primary); /* Ensuring this picks up the new --color-primary */
 }
 
 .btn-secondary:hover, .btn-secondary:focus {
     background-color: var(--color-neutral-100);
-    color: var(--color-primary);
+    color: var(--color-primary); /* Ensuring this picks up the new --color-primary */
     text-decoration: none;
 }
 
@@ -271,7 +273,7 @@ time {
 
 .feature-card h3 {
     margin-top: 0;
-    color: var(--color-primary);
+    color: var(--color-primary); /* Will use new --color-primary */
 }
 
 .feature-card p {
@@ -297,7 +299,7 @@ time {
 }
 
 .disclaimer h2, .tool-disclaimer h2 {
-    color: var(--color-primary);
+    color: var(--color-primary); /* Will use new --color-primary */
     margin-top: 0;
     font-size: var(--font-size-md);
 }
@@ -322,7 +324,7 @@ time {
 .tool-result.info {
     background-color: #e3f2fd;
     border-left: 4px solid var(--color-secondary);
-    color: var(--color-primary);
+    color: var(--color-primary); /* Will use new --color-primary */
 }
 
 .tool-result.info h2 {
@@ -335,7 +337,7 @@ time {
 .tool-result.eligible-10-point-cps {
     background-color: #e8f5e9;
     border-left: 4px solid #4CAF50;
-    color: var(--color-primary);
+    color: var(--color-primary); /* Will use new --color-primary */
 }
 
 .tool-result.eligible-5-point h2,
@@ -348,7 +350,7 @@ time {
 .tool-result.not-eligible {
     background-color: #ffebee;
     border-left: 4px solid var(--color-accent);
-    color: var(--color-primary);
+    color: var(--color-primary); /* Will use new --color-primary */
 }
 
 .tool-result.not-eligible h2 {
@@ -358,11 +360,11 @@ time {
 .tool-result.complex {
     background-color: var(--color-neutral-100);
     border-left: 4px solid var(--color-neutral-700);
-    color: var(--color-primary);
+    color: var(--color-primary); /* Will use new --color-primary */
 }
 
 .tool-result.complex h2 {
-    color: var(--color-primary);
+    color: var(--color-primary); /* Will use new --color-primary */
 }
 
 /* Result Sections */

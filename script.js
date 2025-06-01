@@ -137,7 +137,12 @@
 
     // Initialize dropdown menus
     function initializeDropdowns() {
-        const dropdowns = document.querySelectorAll('.dropdown > a');
+        const dropdowns = document.querySelectorAll('.dropdown > a'); // This selector targets dropdowns if they exist.
+                                                                    // The new header.html uses a mega-menu structure.
+                                                                    // This function might need adjustment if '.dropdown > a' is not the primary mechanism.
+                                                                    // However, header.html itself contains CSS for its mega-menu hover effects.
+                                                                    // This JS based dropdown logic might be for a different dropdown pattern.
+                                                                    // For now, keeping it won't harm if .dropdown isn't used in the new header.
 
         dropdowns.forEach(dropdown => {
             dropdown.addEventListener('click', function (e) {
@@ -225,13 +230,14 @@
 
     // Enhanced navigation functionality
     function initializeNavigation() {
-        // Mobile menu toggle if implemented
-        const menuToggle = document.querySelector('.menu-toggle');
-        const nav = document.querySelector('nav ul');
+        // Mobile menu toggle if implemented (header.html has a search button, not a hamburger menu toggle explicitly)
+        // This might be for a different menu toggle pattern.
+        const menuToggle = document.querySelector('.menu-toggle'); // Example selector
+        const navElement = document.querySelector('nav.main-nav ul'); // Targeting new header's nav
 
-        if (menuToggle && nav) {
+        if (menuToggle && navElement) {
             menuToggle.addEventListener('click', function () {
-                nav.classList.toggle('active');
+                navElement.classList.toggle('active'); // Assumes an 'active' class handles visibility
                 const expanded = this.getAttribute('aria-expanded') === 'true';
                 this.setAttribute('aria-expanded', !expanded);
                 announceToScreenReader(expanded ? 'Navigation menu collapsed' : 'Navigation menu expanded');
@@ -334,111 +340,26 @@
                 border-width: 0;
             }
             
-            nav a.active {
-                font-weight: bold;
-            }
+            /* KEEP THIS IF YOU WANT ACTIVE NAV LINKS TO BE BOLD */
+            /* If your header.html handles this, you can remove it too. header.html styles itself. */
+            /* nav a.active {  */
+            /*     font-weight: bold; */
+            /* } */
+            /* Commenting out as header.html includes its own styling */
             
-            .dropdown.open > .dropdown-content {
-                display: block;
-            }
+            /* KEEP THIS IF YOU RELY ON IT FOR DROPDOWNS, */
+            /* but header.html might have its own dropdown logic/styles now */
+            /* .dropdown.open > .dropdown-content { */
+            /*     display: block;  */
+            /* } */
+            /* Commenting out as header.html mega-menu handles visibility with its own CSS. */
 
-            /* Header Styles */
-            header {
-                background-color: #003366;
-                color: #fff;
-                padding: 1rem 0;
-                margin-bottom: 0;
-            }
-
-            .header-content {
-                max-width: 960px;
-                margin: 0 auto;
-                padding: 0 20px;
-                text-align: center;
-            }
-
-            .header-content h1 {
-                margin: 0 0 0.5rem 0;
-                color: #fff;
-                border-bottom: none;
-            }
-
-            .tagline {
-                margin: 0;
-                font-style: italic;
-                opacity: 0.9;
-            }
-
-            /* Navigation Styles */
-            nav {
-                background-color: #002244;
-                padding: 0;
-            }
-
-            nav ul {
-                max-width: 960px;
-                margin: 0 auto;
-                padding: 0 20px;
-                list-style: none;
-                display: flex;
-                flex-wrap: wrap;
-            }
-
-            nav li {
-                position: relative;
-                margin-bottom: 0; /* Will be overridden by flex alignment if needed */
-            }
-
-            nav a {
-                display: block;
-                padding: 1rem 1.5rem;
-                color: #fff;
-                text-decoration: none;
-                transition: background-color 0.3s ease;
-            }
-
-            nav a:hover,
-            nav a:focus {
-                background-color: #0056b3;
-                text-decoration: none;
-                color: #fff;
-            }
-
-            /* Dropdown styles */
-            .dropdown-content {
-                display: none;
-                position: absolute;
-                top: 100%;
-                left: 0;
-                background-color: #002244;
-                min-width: 200px;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-                z-index: 1000;
-            }
-
-            .dropdown:hover .dropdown-content,
-            .dropdown:focus-within .dropdown-content {
-                /* This hover/focus-within is a fallback if JS fails or for non-JS scenarios.
-                   JS primarily uses the 'open' class. */
-                display: block;
-            }
-
-            .dropdown-content li {
-                width: 100%;
-            }
-
-            .dropdown-content a {
-                padding: 0.75rem 1rem;
-                border-bottom: 1px solid #003366;
-            }
-
-            .dropdown-content a:hover {
-                background-color: #0056b3;
-            }
+            /* Styles for header, nav, and dropdowns have been removed as per Phase 2 instructions. */
+            /* header.html now controls its own styling. */
 
             /* Footer Styles */
             footer {
-                background-color: #333;
+                background-color: #333; /* Kept original very dark footer background */
                 color: #fff;
                 padding: 2rem 0 1rem 0;
                 margin-top: 2rem;
@@ -448,44 +369,25 @@
                 max-width: 960px;
                 margin: 0 auto;
                 padding: 0 20px;
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-                gap: 2rem;
-                justify-items: center; /* Centers footer sections if they don't fill grid column */
+                text-align: center; /* Centering links as per footer.html structure */
             }
-
-            .footer-section {
-                /* Sections will be centered by 'justify-items' on .footer-content.
-                   Text within a section will align according to its own rules or defaults (left). */
-            }
-
-            .footer-section h3 {
-                color: #fff;
-                margin-bottom: 1rem;
-                text-align: left; /* Ensures headings are left-aligned if section block is centered */
-            }
-
-            .footer-section ul {
-                list-style: none;
-                padding: 0;
-                margin: 0; /* Reset default UL margin */
-                display: flex; /* Arrange list items (links) horizontally */
-                flex-wrap: wrap; /* Allow items to wrap to new lines if space is tight */
-                justify-content: center; /* Center the line of links within the UL */
-            }
-
-            .footer-section li {
-                margin: 0 0.5em; /* Horizontal spacing. Replaces 'margin-bottom: 0.5rem;' */
-            }
-
-            .footer-section a {
+            
+            /* Styles for .footer-content a tags as per footer.html structure */
+            .footer-content a {
                 color: #ccc;
-                text-decoration: none; /* Remove underline by default */
+                text-decoration: none;
+                margin: 0 0.5em; /* Spacing for links */
             }
 
-            .footer-section a:hover {
+            .footer-content a:hover {
                 color: #fff;
-                text-decoration: underline; /* Add underline on hover for better affordance */
+                text-decoration: underline;
+            }
+            
+            /* Separator styling for footer, if needed from JS (footer.html has spans) */
+            .footer-content .separator {
+                margin: 0 0.25em;
+                color: #777;
             }
 
             .footer-bottom {
@@ -500,36 +402,30 @@
 
             /* Mobile Navigation and Footer Adjustments */
             @media (max-width: 768px) {
-                nav ul {
-                    flex-direction: column;
-                    padding: 0; /* Reset padding for full-width items */
-                }
-                
-                nav li {
-                    width: 100%; /* Make nav items full width */
-                }
-                
-                .dropdown-content {
-                    position: static; /* Allow dropdown to flow in document */
-                    /* display: none; /* Default, JS toggles with .open class */
-                    box-shadow: none;
-                    background-color: #001122; /* Slightly darker for nested feel */
-                }
+                /* Mobile nav rules for .menu-toggle or specific mobile nav structures would go here if needed */
+                /* The header.html has its own responsive CSS. */
                                 
                 .footer-content {
-                    grid-template-columns: 1fr; /* Stack footer sections */
-                    gap: 1.5rem; /* Adjust gap for mobile */
-                    padding: 0 15px; /* Adjust side padding for mobile */
+                    /* grid-template-columns: 1fr; */ /* Removed as grid is not used */
+                    /* gap: 1.5rem; */ /* Gap is not relevant for text-align:center flow */
+                    padding: 0 15px; 
                 }
 
-                .footer-section ul {
-                    flex-direction: column; /* Stack links vertically */
-                    align-items: center; /* Center-align stacked links */
+                .footer-content a {
+                    display: inline-block; /* Keeps links on same line if space allows */
+                    margin: 0.25em 0.5em; /* Adjust margin for better mobile spacing if they wrap */
                 }
 
-                .footer-section li {
-                    margin: 0.5rem 0; /* Vertical spacing for stacked links */
+                /* Footer links might stack naturally or based on .footer-content text-align.
+                   If more specific stacking and centering needed for links on mobile:
+                .footer-content a {
+                    display: block;
+                    margin: 0.5rem 0;
                 }
+                .footer-content .separator {
+                    display: none; // Hide separators if links are stacked
+                }
+                */
             }
         `;
         document.head.appendChild(utilityStyles);
