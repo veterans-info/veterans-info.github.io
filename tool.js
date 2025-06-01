@@ -119,22 +119,7 @@
                 },
                 {
                     answerText: 'I am an HR professional seeking general information',
-                    resultOutcome: {
-                        type: 'info',
-                        title: 'HR Professional Resources',
-                        description: 'As an HR professional, you have access to comprehensive resources.',
-                        additionalInfo: [
-                            'Review the complete OPM Vet Guide for HR Professionals',
-                            'Consult agency-specific policies',
-                            'Contact OPM for specific case guidance'
-                        ],
-                        opmLinks: [
-                            {
-                                text: 'OPM Vet Guide for HR Professionals',
-                                url: 'https://www.opm.gov/policy-data-oversight/veterans-services/vet-guide-for-hr-professionals/'
-                            }
-                        ]
-                    }
+                    resultId: 'HR_INFO'
                 }
             ]
         },
@@ -179,33 +164,11 @@
                 },
                 {
                     answerText: 'Other Than Honorable (OTH)',
-                    resultOutcome: {
-                        type: 'not-eligible',
-                        title: 'Not Eligible for Veterans\' Preference',
-                        description: 'Veterans\' Preference requires an honorable or general discharge.',
-                        additionalInfo: [
-                            'You may be able to upgrade your discharge through a military discharge review board',
-                            'Some VA benefits may still be available depending on the circumstances'
-                        ],
-                        opmLinks: [
-                            {
-                                text: 'Character of Discharge Requirements',
-                                url: 'https://www.opm.gov/policy-data-oversight/veterans-services/vet-guide-for-hr-professionals/#discharge'
-                            }
-                        ]
-                    }
+                    resultId: 'OTH_DISCHARGE'
                 },
                 {
                     answerText: 'Bad Conduct or Dishonorable',
-                    resultOutcome: {
-                        type: 'not-eligible',
-                        title: 'Not Eligible for Veterans\' Preference',
-                        description: 'Veterans\' Preference is not available with a bad conduct or dishonorable discharge.',
-                        additionalInfo: [
-                            'Discharge upgrades may be possible in limited circumstances',
-                            'Consult with a Veterans Service Organization for assistance'
-                        ]
-                    }
+                    resultId: 'BAD_CONDUCT_DISHONORABLE_DISCHARGE'
                 },
                 {
                     answerText: 'Uncharacterized or Entry Level Separation',
@@ -246,65 +209,19 @@
             answers: [
                 {
                     answerText: 'Yes, rated 30% or more',
-                    resultOutcome: { // Direct to result as distinction between 30% and Purple Heart with 30% for CPS is complex for this tool path
-                        type: 'eligible-10-point-cps', // Using a more specific type for styling if needed
-                        title: 'Potentially Eligible for 10-Point Preference (CPS or XP)',
-                        description: 'You appear to be eligible for 10-point preference, likely as a 30% or more disabled veteran (CPS). This provides significant advantages.',
-                        requiredDocuments: [
-                            'DD-214 or equivalent discharge documentation',
-                            'SF-15 Application for 10-Point Veteran Preference',
-                            'VA letter (dated within the last 12 months) confirming your service-connected disability rating of 30% or more.'
-                        ],
-                        opmLinks: [
-                            { text: '10-Point (30% or more disabled) Preference', url: 'https://www.opm.gov/policy-data-oversight/veterans-services/vet-guide-for-hr-professionals/#cps' }
-                        ]
-                    }
+                    resultId: 'DISABILITY_30_PERCENT_PLUS'
                 },
                 {
                     answerText: 'Yes, rated 10% or 20%',
-                    resultOutcome: {
-                        type: 'eligible-10-point', // CP
-                        title: 'Eligible for 10-Point Preference (CP)',
-                        description: 'You appear to be eligible for 10-point compensable preference (CP).',
-                        requiredDocuments: [
-                            'DD-214 or equivalent discharge documentation',
-                            'SF-15 Application for 10-Point Veteran Preference',
-                            'VA letter (dated within the last 12 months) confirming your service-connected disability rating of 10% or 20%.'
-                        ],
-                        opmLinks: [
-                             { text: '10-Point (Compensable) Preference', url: 'https://www.opm.gov/policy-data-oversight/veterans-services/vet-guide-for-hr-professionals/#cp' }
-                        ]
-                    }
+                    resultId: 'DISABILITY_10_20_PERCENT'
                 },
                 {
                     answerText: 'Yes, rated 0% (less than 10%) OR I received a Purple Heart (without a 30%+ disability)',
-                     resultOutcome: {
-                        type: 'eligible-10-point', // XP
-                        title: 'Eligible for 10-Point Preference (XP)',
-                        description: 'You appear to be eligible for 10-point disability preference (XP). This could be due to a 0% service-connected disability or receipt of the Purple Heart.',
-                        requiredDocuments: [
-                            'DD-214 or equivalent discharge documentation (must show Purple Heart if claiming based on that)',
-                            'SF-15 Application for 10-Point Veteran Preference',
-                            'If 0% disability: VA letter (dated within the last 12 months) confirming your 0% service-connected disability.'
-                        ],
-                        opmLinks: [
-                             { text: '10-Point (Disability/XP) Preference', url: 'https://www.opm.gov/policy-data-oversight/veterans-services/vet-guide-for-hr-professionals/#xp' }
-                        ]
-                    }
+                    resultId: 'DISABILITY_0_PERCENT_OR_PURPLE_HEART'
                 },
                 {
                     answerText: 'No VA-rated service-connected disability and no Purple Heart',
-                    resultOutcome: { // This assumes prior questions (like SERVICE_DATES) established honorable service in a qualifying period/campaign for 5-point.
-                        type: 'eligible-5-point',
-                        title: 'Eligible for 5-Point Preference (TP)',
-                        description: 'Based on your qualifying military service (e.g., wartime, campaign medal, or specific service period) and honorable discharge, you appear to be eligible for 5-point preference (TP).',
-                        requiredDocuments: [
-                            'DD-214 or equivalent discharge documentation (showing qualifying service period/medal and character of discharge)'
-                        ],
-                        opmLinks: [
-                            { text: '5-Point Preference Information', url: 'https://www.opm.gov/policy-data-oversight/veterans-services/vet-guide-for-hr-professionals/#5pointtp' }
-                        ]
-                    }
+                    resultId: 'NO_DISABILITY_NO_PURPLE_HEART'
                 }
             ]
         },
@@ -325,27 +242,11 @@
                 },
                 {
                     answerText: 'Child',
-                    resultOutcome: {
-                        type: 'not-eligible',
-                        title: 'Not Eligible for Derivative Preference',
-                        description: 'Children of veterans are not eligible for derivative preference. Only spouses/unremarried widow(er)s and mothers of certain veterans qualify.',
-                        additionalInfo: [
-                            'The veteran themselves may be eligible for preference',
-                            'Other veteran family benefits may be available through VA'
-                        ]
-                    }
+                    resultId: 'CHILD_NOT_ELIGIBLE'
                 },
                 {
                     answerText: 'Other family member',
-                    resultOutcome: {
-                        type: 'not-eligible',
-                        title: 'Not Eligible for Derivative Preference',
-                        description: 'Only spouses/unremarried widow(er)s and mothers of certain disabled or deceased veterans are eligible for derivative preference.',
-                        additionalInfo: [
-                            'The veteran themselves should apply for their own preference',
-                            'Check with VA for other family member benefits'
-                        ]
-                    }
+                    resultId: 'OTHER_FAMILY_NOT_ELIGIBLE'
                 }
             ]
         },
@@ -358,62 +259,23 @@
             answers: [
                 {
                     answerText: 'The veteran is living and has a VA-certified service-connected disability that permanently and totally disqualifies them for employment along the general lines of their usual occupation (e.g., 100% P&T or IU).',
-                    resultOutcome: {
-                        type: 'eligible-10-point-derivative', // XP
-                        title: 'Potentially Eligible for 10-Point Derivative Preference (XP) - Spouse',
-                        description: 'As the spouse of a living veteran with a 100% permanent and total service-connected disability (or rated IU) that prevents them from working, you may be eligible for 10-point derivative preference.',
-                        requiredDocuments: [
-                            'Your marriage certificate to the veteran.',
-                            'Veteran\'s DD-214 (or equivalent).',
-                            'SF-15 Application for 10-Point Veteran Preference.',
-                            'VA letter (dated within 12 months) confirming the veteran\'s 100% permanent and total service-connected disability OR unemployability (IU) status.',
-                            'Statement certifying the veteran is unemployed and unable to work in their usual occupation due to the disability.'
-                        ],
-                        opmLinks: [ { text: 'Derivative Preference for Spouses', url: 'https://www.opm.gov/policy-data-oversight/veterans-services/vet-guide-for-hr-professionals/#xp' } ]
-                    }
+                    resultId: 'SPOUSE_ELIGIBLE_10_PT_DERIVATIVE_LIVING_VET'
                 },
                 {
                     answerText: 'The veteran is deceased, and their death was service-connected OR they served during specific wartime/campaign periods and you are unremarried.',
-                    resultOutcome: {
-                        type: 'eligible-10-point-derivative', // XP
-                        title: 'Potentially Eligible for 10-Point Derivative Preference (XP) - Widow(er)',
-                        description: 'As the unremarried widow(er) of a deceased veteran (whose death was service-connected or who served in qualifying periods), you may be eligible for 10-point derivative preference.',
-                        requiredDocuments: [
-                            'Your marriage certificate to the veteran.',
-                            'Veteran\'s death certificate.',
-                            'Veteran\'s DD-214 (or equivalent).',
-                            'SF-15 Application for 10-Point Veteran Preference.',
-                            'If death was service-connected, VA documentation confirming this.',
-                            'Statement certifying you have not remarried.'
-                        ],
-                        opmLinks: [ { text: 'Derivative Preference for Widow(er)s', url: 'https://www.opm.gov/policy-data-oversight/veterans-services/vet-guide-for-hr-professionals/#xp' } ]
-                    }
+                    resultId: 'SPOUSE_ELIGIBLE_10_PT_DERIVATIVE_DECEASED_VET'
                 },
                 {
                     answerText: 'The veteran is living, but their disability is less than 100% P&T or does not prevent them from working.',
-                    resultOutcome: {
-                        type: 'not-eligible',
-                        title: 'Not Eligible for Derivative Preference (Spouse)',
-                        description: 'Derivative preference for spouses of *living* veterans generally requires the veteran to have a 100% permanent and total service-connected disability (or be rated IU by VA) that prevents them from working. The veteran should claim their own preference.',
-                        additionalInfo: [ 'The veteran may be eligible for their own preference. They should use this tool or consult OPM guidance.' ]
-                    }
+                    resultId: 'SPOUSE_NOT_ELIGIBLE_LIVING_VET'
                 },
                 {
                     answerText: 'The veteran is deceased, but their death was not service-connected AND they did not serve during a qualifying wartime/campaign period.',
-                     resultOutcome: {
-                        type: 'not-eligible',
-                        title: 'Not Eligible for Derivative Preference (Widow(er))',
-                        description: 'Derivative preference for widow(er)s typically requires the veteran\'s death to be service-connected or for the veteran to have served during specific wartime/campaign periods if the death was not service-connected.',
-                        opmLinks: [ { text: 'Derivative Preference Rules', url: 'https://www.opm.gov/policy-data-oversight/veterans-services/vet-guide-for-hr-professionals/#xp' } ]
-                    }
+                    resultId: 'SPOUSE_NOT_ELIGIBLE_DECEASED_VET'
                 },
                 {
                     answerText: "I am remarried (after the veteran's death).",
-                    resultOutcome: {
-                        type: 'not-eligible',
-                        title: 'Not Eligible for Derivative Preference',
-                        description: 'Remarriage (unless the remarriage was annulled) generally terminates eligibility for derivative preference as a widow(er).',
-                    }
+                    resultId: 'SPOUSE_NOT_ELIGIBLE_REMARRIED'
                 }
             ]
         },
@@ -430,11 +292,7 @@
                 },
                 {
                     answerText: 'No',
-                    resultOutcome: {
-                        type: 'not-eligible',
-                        title: 'Not Eligible for Veterans\' Preference',
-                        description: 'Wartime service without a campaign badge or expeditionary medal generally does not qualify for Veterans\' Preference, unless you have a service-connected disability.'
-                    }
+                    resultId: 'WARTIME_NO_QUALIFYING_SERVICE'
                 }
             ]
         },
@@ -450,52 +308,7 @@
                 },
                 {
                     answerText: 'No',
-                    resultOutcome: {
-                        type: 'not-eligible',
-                        title: 'Not Eligible for Veterans\' Preference',
-                        description: 'Service without a campaign badge or expeditionary medal generally does not qualify for Veterans\' Preference, unless you have a service-connected disability.'
-                    }
-                }
-            ]
-        },
-        // New questions for Phase 1
-        'VERIFY_WARTIME_PERIOD': {
-            id: 'VERIFY_WARTIME_PERIOD',
-            type: questionTypes.SINGLE_CHOICE,
-            questionText: 'Did your wartime service include active duty during a war, campaign, or expedition for which a campaign badge or expeditionary medal was authorized?',
-            helpText: 'This includes WWII, Korea, Vietnam, Gulf War, Iraq/Afghanistan, or other specific campaigns.',
-            answers: [
-                {
-                    answerText: 'Yes',
-                    nextQuestionId: 'DISABILITY_STATUS' // Leads to disability check
-                },
-                {
-                    answerText: 'No',
-                    resultOutcome: {
-                        type: 'not-eligible',
-                        title: 'Not Eligible for Veterans\' Preference',
-                        description: 'Wartime service without a campaign badge or expeditionary medal generally does not qualify for Veterans\' Preference, unless you have a service-connected disability.'
-                    }
-                }
-            ]
-        },
-        'VERIFY_CAMPAIGN_MEDAL': {
-            id: 'VERIFY_CAMPAIGN_MEDAL',
-            type: questionTypes.SINGLE_CHOICE,
-            questionText: 'Did you receive a campaign badge or expeditionary medal for your service?',
-            helpText: 'Examples include the Afghanistan Campaign Medal, Iraq Campaign Medal, Global War on Terrorism Expeditionary Medal, etc.',
-            answers: [
-                {
-                    answerText: 'Yes',
-                    nextQuestionId: 'DISABILITY_STATUS' // Leads to disability check
-                },
-                {
-                    answerText: 'No',
-                    resultOutcome: {
-                        type: 'not-eligible',
-                        title: 'Not Eligible for Veterans\' Preference',
-                        description: 'Service without a campaign badge or expeditionary medal generally does not qualify for Veterans\' Preference, unless you have a service-connected disability.'
-                    }
+                    resultId: 'CAMPAIGN_NO_QUALIFYING_SERVICE'
                 }
             ]
         },
@@ -506,8 +319,8 @@
             type: questionTypes.SINGLE_CHOICE, // Assign type
             questionText: 'Are you within 120 days of separation or retirement (VOW Act eligible)?',
             answers: [
-                { answerText: 'Yes', resultOutcome: { type: 'info', title: 'Active Duty (VOW Act)', description: 'You can apply for federal jobs. You\'ll need a certification letter from your command and must provide DD-214 upon separation.' } },
-                { answerText: 'No, more than 120 days out', resultOutcome: { type: 'info', title: 'Active Duty (Future)', description: 'You can prepare now. Apply once within 120 days of separation under VOW Act provisions.' } }
+                { answerText: 'Yes', resultId: 'ACTIVE_DUTY_VOW_ACT' },
+                { answerText: 'No, more than 120 days out', resultId: 'ACTIVE_DUTY_FUTURE' }
             ]
         },
         'RETIREMENT_TYPE': {
@@ -525,7 +338,7 @@
             questionText: 'Are you a disabled veteran (i.e., do you have a service-connected disability)?',
             answers: [
                 { answerText: 'Yes', nextQuestionId: 'DISABILITY_STATUS' }, // Go to general disability questions
-                { answerText: 'No', resultOutcome: { type: 'not-eligible', title: 'Not Eligible (Retired O-4+ without Disability)', description: 'Retired officers at O-4 or above are generally only eligible for Veterans\' Preference if they are disabled veterans.'} }
+                { answerText: 'No', resultId: 'RETIRED_O4_PLUS_NO_DISABILITY' }
             ]
         },
         'RESERVE_STATUS': {
@@ -543,7 +356,7 @@
             questionText: 'Did you incur or aggravate a disability during any period of military service (including training)?',
             answers: [
                 { answerText: 'Yes, and it is VA-rated service-connected', nextQuestionId: 'DISABILITY_STATUS'},
-                { answerText: 'No', resultOutcome: { type: 'not-eligible', title: 'Not Eligible (Reserve/Guard without Qualifying Active Duty or Disability)', description: 'Reserve/Guard service primarily consisting of training without qualifying active duty periods or a service-connected disability generally does not confer Veterans\' Preference.'}}
+                { answerText: 'No', resultId: 'RESERVE_NO_QUALIFYING_ACTIVE_DUTY_OR_DISABILITY'}
             ]
         },
         'ENTRY_LEVEL_SERVICE': {
@@ -552,7 +365,7 @@
             questionText: 'How long did you serve before receiving an Uncharacterized or Entry Level Separation?',
              helpText: 'This typically occurs within the first 180 days of service.',
             answers: [
-                { answerText: 'Less than 180 days, and no service-connected disability incurred', resultOutcome: { type: 'not-eligible', title: 'Not Eligible (Entry Level Separation)', description: 'An uncharacterized or entry-level separation with less than 180 days of service generally does not qualify for Veterans\' Preference unless a service-connected disability was incurred.' } },
+                { answerText: 'Less than 180 days, and no service-connected disability incurred', resultId: 'ENTRY_LEVEL_LESS_THAN_180_DAYS_NO_DISABILITY' },
                 { answerText: 'Served 180 days or more OR incurred a service-connected disability', nextQuestionId: 'DISABILITY_STATUS' } // Treat as potentially eligible, disability is key
             ]
         },
@@ -563,20 +376,8 @@
             questionText: 'Do you have a VA-rated service-connected disability or did you receive a campaign/expeditionary medal for that peacetime service?',
             answers: [
                 { answerText: 'Yes, I have a service-connected disability rated by VA.', nextQuestionId: 'DISABILITY_STATUS'}, // Re-route to the main disability path
-                { answerText: 'Yes, I received a campaign/expeditionary medal.', resultOutcome: {
-                        type: 'eligible-5-point',
-                        title: 'Eligible for 5-Point Preference (TP)',
-                        description: 'Receipt of a campaign or expeditionary medal qualifies you for 5-point preference, even for peacetime service.',
-                        requiredDocuments: ['DD-214 showing the campaign/expeditionary medal and honorable discharge.'],
-                        opmLinks: [{ text: '5-Point Preference (Campaign Medal)', url: 'https://www.opm.gov/policy-data-oversight/veterans-services/vet-guide-for-hr-professionals/#campaignmedal' }]
-                    }
-                },
-                { answerText: 'No to both.', resultOutcome: {
-                        type: 'not-eligible',
-                        title: 'Not Eligible for Veterans\' Preference',
-                        description: 'Peacetime service without a campaign medal or a service-connected disability generally does not qualify for Veterans\' Preference.',
-                    }
-                }
+                { answerText: 'Yes, I received a campaign/expeditionary medal.', resultId: 'PEACETIME_CAMPAIGN_MEDAL_ELIGIBLE' },
+                { answerText: 'No to both.', resultId: 'PEACETIME_NO_CAMPAIGN_NO_DISABILITY' }
             ]
         },
         'MOTHER_ELIGIBILITY': {
@@ -594,7 +395,7 @@
                 },
                 {
                     answerText: 'None of the above apply to the veteran.',
-                    resultOutcome: { type: 'not-eligible', title: 'Not Eligible (Mother)', description: 'The veteran\'s service or disability status does not meet the criteria for mother\'s derivative preference.' }
+                    resultId: 'MOTHER_NOT_ELIGIBLE_VET_STATUS'
                 }
             ]
         },
@@ -606,30 +407,15 @@
             answers: [
                 {
                     answerText: 'I am widowed (from the veteran\'s father or a subsequent marriage) OR divorced/legally separated and have not remarried since.',
-                    resultOutcome: {
-                        type: 'eligible-10-point-derivative', title: 'Potentially Eligible for 10-Point Derivative Preference (XP) - Mother',
-                        description: 'You may be eligible for 10-point derivative preference as the mother of a qualifying deceased or disabled veteran, based on your marital status.',
-                        requiredDocuments: [
-                            'Your birth certificate (or veteran\'s showing you as mother).',
-                            'Veteran\'s DD-214 and/or death certificate or VA disability letter.',
-                            'SF-15 Application for 10-Point Veteran Preference.',
-                            'Marriage certificate to veteran\'s father; Death certificate/divorce decree for relevant spouse(s).'
-                        ],
-                        opmLinks: [{ text: 'Derivative Preference for Mothers', url: 'https://www.opm.gov/policy-data-oversight/veterans-services/vet-guide-for-hr-professionals/#xp' }]
-                    }
+                    resultId: 'MOTHER_ELIGIBLE_10_PT_DERIVATIVE_WIDOWED_DIVORCED'
                 },
                 {
                     answerText: 'I am currently married, and my current husband is permanently and totally disabled.',
-                     resultOutcome: {
-                        type: 'eligible-10-point-derivative', title: 'Potentially Eligible for 10-Point Derivative Preference (XP) - Mother',
-                        description: 'You may be eligible for 10-point derivative preference as the mother of a qualifying deceased or disabled veteran, if your current husband is permanently and totally disabled.',
-                        requiredDocuments: [ /* Similar to above, plus proof of husband's disability */ ],
-                        opmLinks: [{ text: 'Derivative Preference for Mothers', url: 'https://www.opm.gov/policy-data-oversight/veterans-services/vet-guide-for-hr-professionals/#xp' }]
-                    }
+                    resultId: 'MOTHER_ELIGIBLE_10_PT_DERIVATIVE_MARRIED_DISABLED_HUSBAND'
                 },
                 {
                     answerText: 'I am currently married, and my current husband is NOT permanently and totally disabled.',
-                    resultOutcome: { type: 'not-eligible', title: 'Not Eligible (Mother)', description: 'If you are currently married and your husband is not permanently and totally disabled, you generally do not qualify for mother\'s derivative preference.' }
+                    resultId: 'MOTHER_NOT_ELIGIBLE_MARRIED_NON_DISABLED_HUSBAND'
                 }
             ]
         }
@@ -659,6 +445,293 @@
             // For now, focus on direct contradictions from currentAnswers map.
 
             return issues;
+        }
+    };
+
+    // Phase 4: Enhance Result Generation Logic
+    const resultGenerator = {
+        generateResult: (answerPath) => {
+            const lastAnswer = answerPath[answerPath.length - 1];
+            const resultId = lastAnswer ? lastAnswer.resultId : null; // Get resultId from the last answer if it exists
+
+            const analysis = resultGenerator.analyzeEligibility(answerPath, resultId);
+            
+            return {
+                type: analysis.eligibilityType,
+                title: resultGenerator.generateTitle(analysis),
+                description: resultGenerator.generateDescription(analysis),
+                reasoning: resultGenerator.generateReasoning(analysis),
+                confidence: analysis.confidence,
+                requiredDocuments: resultGenerator.getRequiredDocuments(analysis),
+                additionalInfo: resultGenerator.getAdditionalInfo(analysis),
+                opmLinks: resultGenerator.getRelevantLinks(analysis)
+            };
+        },
+        
+        analyzeEligibility: (answerPath, resultId = null) => {
+            const answersMap = answerPath.reduce((acc, item) => {
+                acc[item.questionId] = item.answerText;
+                return acc;
+            }, {});
+
+            if (resultId === 'HR_INFO') {
+                return {
+                    eligibilityType: 'info',
+                    confidence: 'high',
+                    factors: answersMap,
+                    serviceQualifies: { qualifies: false, reason: 'N/A for HR info path.' },
+                    disabilityQualifies: { qualifies: false, reason: 'N/A for HR info path.' },
+                    derivativeQualifies: { qualifies: false, reason: 'N/A for HR info path.' }
+                };
+            } else if (resultId === 'OTH_DISCHARGE' || resultId === 'BAD_CONDUCT_DISHONORABLE_DISCHARGE') {
+                return {
+                    eligibilityType: 'not-eligible',
+                    confidence: 'high',
+                    factors: answersMap,
+                    serviceQualifies: { qualifies: false, reason: 'Discharge type does not qualify.' },
+                    disabilityQualifies: { qualifies: false, reason: 'N/A due to discharge type.' },
+                    derivativeQualifies: { qualifies: false, reason: 'N/A due to discharge type.' }
+                };
+            }
+
+            let serviceQualifies = { qualifies: false, reason: 'No qualifying service found.' };
+            let disabilityQualifies = { qualifies: false, reason: 'No qualifying disability found.' };
+            let derivativeQualifies = { qualifies: false, reason: 'Not applicable or no derivative eligibility.' };
+            let eligibilityType = 'not-eligible';
+            let confidence = 'high'; // Default confidence
+
+            // Simplified logic for demonstration. This would be much more complex in a real app.
+            // Service Qualification
+            const serviceDatesAnswer = answersMap['SERVICE_DATES'];
+            const dischargeTypeAnswer = answersMap['DISCHARGE_TYPE'];
+            const veteranStatusAnswer = answersMap['VETERAN_STATUS'];
+            const disabilityStatusAnswer = answersMap['DISABILITY_STATUS'];
+            const familyRelationshipAnswer = answersMap['FAMILY_RELATIONSHIP'];
+            const spouseEligibilityAnswer = answersMap['SPOUSE_ELIGIBILITY'];
+            const motherEligibilityAnswer = answersMap['MOTHER_ELIGIBILITY'];
+            const motherMaritalStatusAnswer = answersMap['MOTHER_MARITAL_STATUS'];
+
+            if (dischargeTypeAnswer === 'Honorable' || dischargeTypeAnswer === 'General (Under Honorable Conditions)') {
+                if (serviceDatesAnswer && (serviceDatesAnswer.includes('Wartime service') || serviceDatesAnswer.includes('Campaign or expedition with medal'))) {
+                    serviceQualifies = { qualifies: true, reason: 'Qualifying wartime or campaign service with honorable discharge.' };
+                    eligibilityType = 'eligible-5-point'; // Base eligibility
+                } else if (serviceDatesAnswer === 'Peacetime service only (no campaign medals)' && answersMap['DISABILITY_STATUS_PEACETIME_CHECK'] && answersMap['DISABILITY_STATUS_PEACETIME_CHECK'].includes('campaign/expeditionary medal')) {
+                    serviceQualifies = { qualifies: true, reason: 'Peacetime service with campaign medal.' };
+                    eligibilityType = 'eligible-5-point';
+                }
+            }
+
+            // Handle DISABILITY_STATUS resultIds
+            if (resultId === 'DISABILITY_30_PERCENT_PLUS') {
+                disabilityQualifies = { qualifies: true, reason: 'VA-rated service-connected disability of 30% or more.' };
+                eligibilityType = 'eligible-10-point-cps';
+            } else if (resultId === 'DISABILITY_10_20_PERCENT') {
+                disabilityQualifies = { qualifies: true, reason: 'VA-rated service-connected disability of 10% or 20%.' };
+                eligibilityType = 'eligible-10-point'; // CP
+            } else if (resultId === 'DISABILITY_0_PERCENT_OR_PURPLE_HEART') {
+                disabilityQualifies = { qualifies: true, reason: 'VA-rated service-connected disability of 0% or Purple Heart.' };
+                eligibilityType = 'eligible-10-point'; // XP
+            } else if (resultId === 'NO_DISABILITY_NO_PURPLE_HEART') {
+                // This path assumes prior questions (like SERVICE_DATES) established honorable service in a qualifying period/campaign for 5-point.
+                // If service qualifies, then it's 5-point. Otherwise, it's not eligible.
+                if (serviceQualifies.qualifies) {
+                    eligibilityType = 'eligible-5-point';
+                } else {
+                    eligibilityType = 'not-eligible';
+                    serviceQualifies.reason = 'No qualifying service found for 5-point preference without disability.';
+                }
+            }
+
+            // Derivative Qualification
+            if (familyRelationshipAnswer) {
+                if (familyRelationshipAnswer.includes('Spouse or Unremarried Widow(er)')) {
+                    if (spouseEligibilityAnswer && spouseEligibilityAnswer.includes('The veteran is living and has a VA-certified service-connected disability that permanently and totally disqualifies them for employment')) {
+                        derivativeQualifies = { qualifies: true, reason: 'Spouse of 100% P&T disabled veteran.' };
+                        eligibilityType = 'eligible-10-point-derivative';
+                    } else if (spouseEligibilityAnswer && spouseEligibilityAnswer.includes('The veteran is deceased, and their death was service-connected OR they served during specific wartime/campaign periods and you are unremarried.')) {
+                        derivativeQualifies = { qualifies: true, reason: 'Unremarried widow(er) of qualifying deceased veteran.' };
+                        eligibilityType = 'eligible-10-point-derivative';
+                    }
+                } else if (familyRelationshipAnswer.includes('Mother')) {
+                    if (motherEligibilityAnswer && (motherEligibilityAnswer.includes('died under honorable conditions') || motherEligibilityAnswer.includes('permanent and total service-connected disability'))) {
+                        if (motherMaritalStatusAnswer && (motherMaritalStatusAnswer.includes('I am widowed') || motherMaritalStatusAnswer.includes('I am currently married, and my current husband is permanently and totally disabled.'))) {
+                            derivativeQualifies = { qualifies: true, reason: 'Mother of qualifying deceased or disabled veteran with appropriate marital status.' };
+                            eligibilityType = 'eligible-10-point-derivative';
+                        }
+                    }
+                }
+            }
+
+            // Determine final eligibility type based on the strongest qualification
+            if (disabilityQualifies.qualifies && eligibilityType.includes('10-point')) {
+                // Keep the specific 10-point type (CPS, CP, XP)
+            } else if (serviceQualifies.qualifies && eligibilityType === 'eligible-5-point') {
+                // Keep 5-point if no 10-point
+            } else if (derivativeQualifies.qualifies && eligibilityType.includes('derivative')) {
+                // Keep derivative if applicable
+            } else {
+                eligibilityType = 'not-eligible'; // Default if no specific qualification met
+            }
+
+            // Refine confidence based on path complexity or missing info (placeholder)
+            // if (answersMap['SOME_COMPLEX_QUESTION'] === 'Unsure') confidence = 'medium';
+
+            return {
+                eligibilityType,
+                confidence,
+                factors: answersMap, // Pass all answers for detailed reasoning
+                serviceQualifies,
+                disabilityQualifies,
+                derivativeQualifies
+            };
+        },
+        
+        generateTitle: (analysis) => {
+            switch (analysis.eligibilityType) {
+                case 'eligible-5-point': return 'Eligible for 5-Point Preference (TP)';
+                case 'eligible-10-point': return 'Eligible for 10-Point Preference (CP or XP)';
+                case 'eligible-10-point-cps': return 'Eligible for 10-Point Preference (CPS)';
+                case 'eligible-10-point-derivative': return 'Potentially Eligible for 10-Point Derivative Preference';
+                case 'not-eligible': return 'Not Eligible for Veterans\' Preference';
+                case 'info': return 'Information Only'; // For HR professional path, etc.
+                default: return 'Veterans\' Preference Eligibility';
+            }
+        },
+
+        generateDescription: (analysis) => {
+            switch (analysis.eligibilityType) {
+                case 'eligible-5-point': return 'Based on your qualifying military service and honorable discharge, you appear to be eligible for 5-point preference (TP).';
+                case 'eligible-10-point': return 'Based on your service-connected disability, you appear to be eligible for 10-point preference (CP or XP).';
+                case 'eligible-10-point-cps': return 'Based on your 30% or more service-connected disability, you appear to be eligible for 10-point preference (CPS).';
+                case 'eligible-10-point-derivative': return 'Based on your relationship to a qualifying veteran, you may be eligible for 10-point derivative preference.';
+                case 'not-eligible': return 'Based on your answers, you do not appear to be eligible for Veterans\' Preference at this time.';
+                case 'info': return 'This path provides general information or resources.';
+                default: return 'Review the reasoning below for details.';
+            }
+        },
+
+        generateReasoning: (analysis) => {
+            const reasons = [];
+            if (analysis.eligibilityType.includes('eligible')) {
+                if (analysis.serviceQualifies.qualifies) {
+                    reasons.push(`✓ Service qualification: ${analysis.serviceQualifies.reason}`);
+                }
+                if (analysis.disabilityQualifies.qualifies) {
+                    reasons.push(`✓ Disability qualification: ${analysis.disabilityQualifies.reason}`);
+                }
+                if (analysis.derivativeQualifies.qualifies) {
+                    reasons.push(`✓ Derivative qualification: ${analysis.derivativeQualifies.reason}`);
+                }
+            } else if (analysis.eligibilityType === 'not-eligible') {
+                if (!analysis.serviceQualifies.qualifies) {
+                    reasons.push(`✗ Service does not qualify: ${analysis.serviceQualifies.reason}`);
+                }
+                if (!analysis.disabilityQualifies.qualifies) {
+                    reasons.push(`✗ Disability does not qualify: ${analysis.disabilityQualifies.reason}`);
+                }
+                if (!analysis.derivativeQualifies.qualifies) {
+                    reasons.push(`✗ Derivative status does not qualify: ${analysis.derivativeQualifies.reason}`);
+                }
+                // Add specific reasons for not eligible based on answers
+                if (analysis.factors['DISCHARGE_TYPE'] && (analysis.factors['DISCHARGE_TYPE'].includes('Other Than Honorable') || analysis.factors['DISCHARGE_TYPE'].includes('Bad Conduct'))) {
+                    reasons.push('✗ Discharge type is not honorable or general (under honorable conditions).');
+                }
+                if (analysis.factors['VETERAN_STATUS'] === 'Retired military' && analysis.factors['RETIREMENT_TYPE'] === 'Major/Lt. Commander (O-4) or above' && analysis.factors['RETIRED_OFFICER_DISABILITY'] === 'No') {
+                    reasons.push('✗ Retired officer (O-4 or above) without a service-connected disability.');
+                }
+            } else if (analysis.eligibilityType === 'info') {
+                reasons.push('This path provides general information and resources, not a preference eligibility determination.');
+            }
+            return reasons.length > 0 ? reasons : ['No specific reasoning available for this outcome.'];
+        },
+
+        getRequiredDocuments: (analysis) => {
+            const docs = new Set();
+            docs.add('DD-214 or equivalent discharge documentation');
+
+            if (analysis.eligibilityType.includes('10-point') || analysis.eligibilityType.includes('derivative')) {
+                docs.add('SF-15 Application for 10-Point Veteran Preference');
+            }
+
+            if (analysis.disabilityQualifies.qualifies) {
+                docs.add('VA letter (dated within the last 12 months) confirming your service-connected disability rating.');
+            }
+
+            if (analysis.eligibilityType === 'eligible-10-point-cps') {
+                docs.add('VA letter confirming 30% or more service-connected disability rating.');
+            } else if (analysis.eligibilityType === 'eligible-10-point' && analysis.disabilityQualifies.reason.includes('10% or 20%')) {
+                docs.add('VA letter confirming 10% or 20% service-connected disability rating.');
+            } else if (analysis.eligibilityType === 'eligible-10-point' && analysis.disabilityQualifies.reason.includes('0%')) {
+                docs.add('VA letter confirming 0% service-connected disability rating.');
+            } else if (analysis.eligibilityType === 'eligible-10-point' && analysis.disabilityQualifies.reason.includes('Purple Heart')) {
+                docs.add('DD-214 showing Purple Heart award.');
+            }
+
+            if (analysis.derivativeQualifies.qualifies) {
+                if (analysis.factors['FAMILY_RELATIONSHIP'] === 'Spouse or Unremarried Widow(er)') {
+                    docs.add('Marriage certificate to the veteran.');
+                    if (analysis.factors['SPOUSE_ELIGIBILITY'] && analysis.factors['SPOUSE_ELIGIBILITY'].includes('The veteran is living and has a VA-certified service-connected disability that permanently and totally disqualifies them for employment')) {
+                        docs.add('VA letter confirming veteran\'s 100% permanent and total service-connected disability OR unemployability (IU) status.');
+                        docs.add('Statement certifying the veteran is unemployed and unable to work in their usual occupation due to the disability.');
+                    } else if (analysis.factors['SPOUSE_ELIGIBILITY'] && analysis.factors['SPOUSE_ELIGIBILITY'].includes('The veteran is deceased, and their death was service-connected OR they served during specific wartime/campaign periods and you are unremarried.')) {
+                        docs.add('Veteran\'s death certificate.');
+                        docs.add('If death was service-connected, VA documentation confirming this.');
+                        docs.add('Statement certifying you have not remarried.');
+                    }
+                } else if (analysis.factors['FAMILY_RELATIONSHIP'] === 'Mother') {
+                    docs.add('Your birth certificate (or veteran\'s showing you as mother).');
+                    if (analysis.factors['MOTHER_ELIGIBILITY'] && analysis.factors['MOTHER_ELIGIBILITY'].includes('died under honorable conditions')) {
+                        docs.add('Veteran\'s death certificate.');
+                    } else if (analysis.factors['MOTHER_ELIGIBILITY'] && analysis.factors['MOTHER_ELIGIBILITY'].includes('permanent and total service-connected disability')) {
+                        docs.add('VA letter confirming veteran\'s permanent and total service-connected disability.');
+                    }
+                    docs.add('SF-15 Application for 10-Point Veteran Preference.');
+                    docs.add('Marriage certificate to veteran\'s father; Death certificate/divorce decree for relevant spouse(s).');
+                }
+            }
+            return Array.from(docs);
+        },
+
+        getAdditionalInfo: (analysis) => {
+            const info = new Set();
+            if (analysis.eligibilityType === 'not-eligible') {
+                info.add('Please review your answers or consult official OPM guidance for more details.');
+                if (analysis.factors['DISCHARGE_TYPE'] && (analysis.factors['DISCHARGE_TYPE'].includes('Other Than Honorable') || analysis.factors['DISCHARGE_TYPE'].includes('Bad Conduct'))) {
+                    info.add('You may be able to upgrade your discharge through a military discharge review board.');
+                }
+            } else if (analysis.eligibilityType === 'info') {
+                info.add('Review the complete OPM Vet Guide for HR Professionals.');
+                info.add('Consult agency-specific policies.');
+                info.add('Contact OPM for specific case guidance.');
+            }
+            return Array.from(info);
+        },
+
+        getRelevantLinks: (analysis) => {
+            const links = new Map(); // Use Map to ensure unique links by URL
+            links.set('https://www.opm.gov/policy-data-oversight/veterans-services/vet-guide-for-hr-professionals/', { text: 'OPM Vet Guide for HR Professionals (Main)', url: 'https://www.opm.gov/policy-data-oversight/veterans-services/vet-guide-for-hr-professionals/' });
+
+            if (analysis.eligibilityType.includes('5-point')) {
+                links.set('https://www.opm.gov/policy-data-oversight/veterans-services/vet-guide-for-hr-professionals/#5pointtp', { text: '5-Point Preference Information', url: 'https://www.opm.gov/policy-data-oversight/veterans-services/vet-guide-for-hr-professionals/#5pointtp' });
+            } else if (analysis.eligibilityType.includes('10-point')) {
+                links.set('https://www.opm.gov/policy-data-oversight/veterans-services/vet-guide-for-hr-professionals/#10point', { text: 'General 10-Point Preference Information', url: 'https://www.opm.gov/policy-data-oversight/veterans-services/vet-guide-for-hr-professionals/#10point' });
+                if (analysis.eligibilityType === 'eligible-10-point-cps') {
+                    links.set('https://www.opm.gov/policy-data-oversight/veterans-services/vet-guide-for-hr-professionals/#cps', { text: '10-Point (30% or more disabled) Preference (CPS)', url: 'https://www.opm.gov/policy-data-oversight/veterans-services/vet-guide-for-hr-professionals/#cps' });
+                } else if (analysis.disabilityQualifies.reason.includes('10% or 20%')) {
+                    links.set('https://www.opm.gov/policy-data-oversight/veterans-services/vet-guide-for-hr-professionals/#cp', { text: '10-Point (Compensable) Preference (CP)', url: 'https://www.opm.gov/policy-data-oversight/veterans-services/vet-guide-for-hr-professionals/#cp' });
+                } else if (analysis.disabilityQualifies.reason.includes('0%') || analysis.disabilityQualifies.reason.includes('Purple Heart')) {
+                    links.set('https://www.opm.gov/policy-data-oversight/veterans-services/vet-guide-for-hr-professionals/#xp', { text: '10-Point (Disability/XP) Preference', url: 'https://www.opm.gov/policy-data-oversight/veterans-services/vet-guide-for-hr-professionals/#xp' });
+                }
+            } else if (analysis.eligibilityType.includes('derivative')) {
+                links.set('https://www.opm.gov/policy-data-oversight/veterans-services/vet-guide-for-hr-professionals/#derivative', { text: 'Derivative Preference Information', url: 'https://www.opm.gov/policy-data-oversight/veterans-services/vet-guide-for-hr-professionals/#derivative' });
+            }
+
+            // Add specific links based on answers (e.g., discharge type)
+            if (analysis.factors['DISCHARGE_TYPE'] && (analysis.factors['DISCHARGE_TYPE'].includes('Other Than Honorable') || analysis.factors['DISCHARGE_TYPE'].includes('Bad Conduct'))) {
+                links.set('https://www.opm.gov/policy-data-oversight/veterans-services/vet-guide-for-hr-professionals/#discharge', { text: 'Character of Discharge Requirements', url: 'https://www.opm.gov/policy-data-oversight/veterans-services/vet-guide-for-hr-professionals/#discharge' });
+            }
+            
+            return Array.from(links.values());
         }
     };
 
@@ -1054,7 +1127,9 @@
             } else if (answer.resultOutcome) {
                 // Before displaying result, ensure currentStep reflects being at the end.
                 stateManager.state.currentStep = stateManager.state.totalSteps;
-                displayResult(answer.resultOutcome);
+                // Generate the result dynamically using the resultGenerator
+                const generatedResult = resultGenerator.generateResult(stateManager.state.answerPath);
+                displayResult(generatedResult);
             } else {
                 console.warn('Answer does not lead to a next question or result:', answer);
                 if (elements.questionArea) elements.questionArea.innerHTML = '<p class="error-message">Configuration error. Next step not defined.</p>';
