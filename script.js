@@ -2,8 +2,105 @@
 (function () {
     'use strict';
 
+    // Loading states management
+    const loadingStates = new Map();
+    
+    // Debounce utility
+    function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+
+    // Fade in element utility
+    function fadeIn(element, duration = 300) {
+        element.style.opacity = '0';
+        element.style.display = 'block';
+        element.style.transition = `opacity ${duration}ms ease-in-out`;
+        
+        // Force reflow
+        element.offsetHeight;
+        
+        element.style.opacity = '1';
+        
+        return new Promise(resolve => {
+            setTimeout(resolve, duration);
+        });
+    }
+
+    // Fade out element utility
+    function fadeOut(element, duration = 300) {
+        element.style.transition = `opacity ${duration}ms ease-in-out`;
+        element.style.opacity = '0';
+        
+        return new Promise(resolve => {
+            setTimeout(() => {
+                element.style.display = 'none';
+                resolve();
+            }, duration);
+        });
+    }
+
+    // Add loading indicator
+    function showLoading(identifier) {
+        loadingStates.set(identifier, true);
+        const loader = document.createElement('div');
+        loader.className = 'loading-indicator';
+        loader.id = `loading-${identifier}`;
+        loader.innerHTML = '<div class="spinner"></div>';
+        document.body.appendChild(loader);
+        fadeIn(loader, 200);
+    }
+
+    // Remove loading indicator
+    function hideLoading(identifier) {
+        loadingStates.delete(identifier);
+        const loader = document.getElementById(`loading-${identifier}`);
+        if (loader) {
+            fadeOut(loader, 200).then(() => {
+                loader.remove();
+            });
+        }
+    }
+
+    // Initialize Intersection Observer for animations
+    function initializeIntersectionObserver() {
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-in');
+                    
+                    // Optional: stop observing after animation
+                    if (entry.target.dataset.animateOnce === 'true') {
+                        observer.unobserve(entry.target);
+                    }
+                }
+            });
+        }, observerOptions);
+
+        // Observe elements with animation classes
+        const animatedElements = document.querySelectorAll('.fade-in-up, .fade-in-down, .fade-in-left, .fade-in-right, .scale-in, [data-animate]');
+        animatedElements.forEach(el => {
+            observer.observe(el);
+        });
+    }
+
     // DOM Content Loaded
     document.addEventListener('DOMContentLoaded', async function () {
+        showLoading('main');
+        
         // Load header and footer first
         await Promise.all([loadHeader(), loadFooter()]);
 
@@ -13,7 +110,17 @@
         initializeNavigation(); // If menu toggle is in header/footer, this needs them loaded
         initializeAccessibility();
         initializeAnalytics();
-        // Any other initializations
+        initializeSmoothScroll();
+        initializeIntersectionObserver();
+        
+        // Hide main loading indicator
+        hideLoading('main');
+        
+        // Fade in main content
+        const mainContent = document.querySelector('main');
+        if (mainContent) {
+            mainContent.classList.add('content-loaded');
+        }
     });
 
     // Load header HTML
@@ -33,7 +140,16 @@
                 // Look for header placeholder first
                 const headerPlaceholder = document.getElementById('header-placeholder');
                 if (headerPlaceholder) {
-                    headerPlaceholder.innerHTML = data;
+                    // Create temporary container
+                    const temp = document.createElement('div');
+                    temp.innerHTML = data;
+                    temp.style.opacity = '0';
+                    headerPlaceholder.appendChild(temp);
+                    
+                    // Fade in
+                    return fadeIn(temp, 300).then(() => {
+                        headerPlaceholder.innerHTML = data;
+                    });
                 } else {
                     // Insert header after skip link
                     const skipLink = document.querySelector('.skip-link');
@@ -68,7 +184,16 @@
                 // Look for footer placeholder first
                 const footerPlaceholder = document.getElementById('footer-placeholder');
                 if (footerPlaceholder) {
-                    footerPlaceholder.innerHTML = data;
+                    // Create temporary container
+                    const temp = document.createElement('div');
+                    temp.innerHTML = data;
+                    temp.style.opacity = '0';
+                    footerPlaceholder.appendChild(temp);
+                    
+                    // Fade in
+                    return fadeIn(temp, 300).then(() => {
+                        footerPlaceholder.innerHTML = data;
+                    });
                 } else {
                     // Fallback: inject before scripts or at end of body
                     const scripts = document.body.querySelectorAll('script');
@@ -135,7 +260,7 @@
         });
     }
 
-    // Initialize dropdown menus
+    // Initialize dropdown menus with smooth transitions
     function initializeDropdowns() {
         const dropdowns = document.querySelectorAll('.dropdown > a');
 
@@ -143,21 +268,36 @@
             dropdown.addEventListener('click', function (e) {
                 e.preventDefault();
                 const expanded = this.getAttribute('aria-expanded') === 'true';
+                const dropdownContent = this.nextElementSibling;
 
-                // Close all other dropdowns
+                // Close all other dropdowns with transition
                 dropdowns.forEach(otherDropdown => {
                     if (otherDropdown !== this) {
                         otherDropdown.setAttribute('aria-expanded', 'false');
+                        const otherContent = otherDropdown.nextElementSibling;
                         if (otherDropdown.parentElement) {
-                           otherDropdown.parentElement.classList.remove('open');
+                            otherDropdown.parentElement.classList.remove('open');
+                            if (otherContent) {
+                                fadeOut(otherContent, 200);
+                            }
                         }
                     }
                 });
 
-                // Toggle current dropdown
+                // Toggle current dropdown with transition
                 this.setAttribute('aria-expanded', !expanded);
                 if (this.parentElement) {
-                    this.parentElement.classList.toggle('open');
+                    if (!expanded) {
+                        this.parentElement.classList.add('open');
+                        if (dropdownContent) {
+                            fadeIn(dropdownContent, 200);
+                        }
+                    } else {
+                        this.parentElement.classList.remove('open');
+                        if (dropdownContent) {
+                            fadeOut(dropdownContent, 200);
+                        }
+                    }
                 }
             });
 
@@ -170,6 +310,10 @@
                     this.setAttribute('aria-expanded', 'false');
                     if (this.parentElement) {
                         this.parentElement.classList.remove('open');
+                        const dropdownContent = this.nextElementSibling;
+                        if (dropdownContent) {
+                            fadeOut(dropdownContent, 200);
+                        }
                     }
                     this.blur();
                 }
@@ -181,8 +325,12 @@
             if (!e.target.closest('.dropdown')) {
                 dropdowns.forEach(dropdown => {
                     dropdown.setAttribute('aria-expanded', 'false');
-                     if (dropdown.parentElement) {
+                    if (dropdown.parentElement) {
                         dropdown.parentElement.classList.remove('open');
+                        const dropdownContent = dropdown.nextElementSibling;
+                        if (dropdownContent) {
+                            fadeOut(dropdownContent, 200);
+                        }
                     }
                 });
             }
@@ -195,10 +343,63 @@
                     dropdown.setAttribute('aria-expanded', 'false');
                     if (dropdown.parentElement) {
                         dropdown.parentElement.classList.remove('open');
+                        const dropdownContent = dropdown.nextElementSibling;
+                        if (dropdownContent) {
+                            fadeOut(dropdownContent, 200);
+                        }
                     }
                 });
             }
         });
+    }
+
+    // Initialize smooth scrolling
+    function initializeSmoothScroll() {
+        // Smooth scrolling for anchor links
+        const anchorLinks = document.querySelectorAll('a[href^="#"]');
+        anchorLinks.forEach(link => {
+            link.addEventListener('click', function (e) {
+                const targetId = this.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+
+                if (targetElement) {
+                    e.preventDefault();
+                    
+                    // Calculate offset for fixed header
+                    const header = document.querySelector('header');
+                    const headerHeight = header ? header.offsetHeight : 0;
+                    const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - headerHeight - 20;
+                    
+                    window.scrollTo({
+                        top: targetPosition,
+                        behavior: 'smooth'
+                    });
+
+                    setTimeout(() => {
+                        targetElement.focus({ preventScroll: true });
+                        announceToScreenReader(`Scrolled to ${targetElement.textContent || targetId}`);
+                    }, 500);
+                }
+            });
+        });
+
+        // Debounced scroll event for performance
+        const handleScroll = debounce(() => {
+            const scrolled = window.pageYOffset > 100;
+            document.body.classList.toggle('scrolled', scrolled);
+            
+            // Back to top button visibility
+            const backToTopButton = document.querySelector('.back-to-top');
+            if (backToTopButton) {
+                if (scrolled) {
+                    fadeIn(backToTopButton, 200);
+                } else {
+                    fadeOut(backToTopButton, 200);
+                }
+            }
+        }, 100);
+
+        window.addEventListener('scroll', handleScroll);
     }
 
     // Update current year
@@ -231,34 +432,21 @@
 
         if (menuToggle && nav) {
             menuToggle.addEventListener('click', function () {
-                nav.classList.toggle('active');
                 const expanded = this.getAttribute('aria-expanded') === 'true';
                 this.setAttribute('aria-expanded', !expanded);
+                
+                if (!expanded) {
+                    nav.classList.add('active');
+                    fadeIn(nav, 300);
+                } else {
+                    fadeOut(nav, 300).then(() => {
+                        nav.classList.remove('active');
+                    });
+                }
+                
                 announceToScreenReader(expanded ? 'Navigation menu collapsed' : 'Navigation menu expanded');
             });
         }
-
-        // Smooth scrolling for anchor links
-        const anchorLinks = document.querySelectorAll('a[href^="#"]');
-        anchorLinks.forEach(link => {
-            link.addEventListener('click', function (e) {
-                const targetId = this.getAttribute('href').substring(1);
-                const targetElement = document.getElementById(targetId);
-
-                if (targetElement) {
-                    e.preventDefault();
-                    targetElement.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-
-                    setTimeout(() => {
-                        targetElement.focus({ preventScroll: true });
-                        announceToScreenReader(`Scrolled to ${targetElement.textContent || targetId}`);
-                    }, 0);
-                }
-            });
-        });
     }
 
     // Accessibility enhancements
@@ -286,7 +474,7 @@
                         e.preventDefault();
                         target.setAttribute('tabindex', '-1');
                         target.focus();
-                        target.scrollIntoView();
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
                         announceToScreenReader(`Skipped to main content`);
                     }
                 }
@@ -342,12 +530,122 @@
                 display: block;
             }
 
+            /* Loading States */
+            .loading-indicator {
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                z-index: 9999;
+                background: rgba(255, 255, 255, 0.95);
+                padding: 2rem;
+                border-radius: 8px;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            }
+
+            .spinner {
+                width: 40px;
+                height: 40px;
+                border: 4px solid #f3f3f3;
+                border-top: 4px solid #3498db;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+            }
+
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+
+            /* Smooth Transitions */
+            * {
+                transition: color 0.3s ease, background-color 0.3s ease;
+            }
+
+            main {
+                opacity: 0;
+                transition: opacity 0.5s ease-in-out;
+            }
+
+            main.content-loaded {
+                opacity: 1;
+            }
+
+            /* Animation Classes */
+            .fade-in-up,
+            .fade-in-down,
+            .fade-in-left,
+            .fade-in-right,
+            .scale-in {
+                opacity: 0;
+                transition: opacity 0.6s ease, transform 0.6s ease;
+            }
+
+            .fade-in-up {
+                transform: translateY(30px);
+            }
+
+            .fade-in-down {
+                transform: translateY(-30px);
+            }
+
+            .fade-in-left {
+                transform: translateX(-30px);
+            }
+
+            .fade-in-right {
+                transform: translateX(30px);
+            }
+
+            .scale-in {
+                transform: scale(0.9);
+            }
+
+            .fade-in-up.animate-in,
+            .fade-in-down.animate-in,
+            .fade-in-left.animate-in,
+            .fade-in-right.animate-in,
+            .scale-in.animate-in {
+                opacity: 1;
+                transform: translate(0) scale(1);
+            }
+
+            /* Back to Top Button */
+            .back-to-top {
+                position: fixed;
+                bottom: 2rem;
+                right: 2rem;
+                background: #003366;
+                color: #fff;
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                display: none;
+                align-items: center;
+                justify-content: center;
+                text-decoration: none;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+                transition: all 0.3s ease;
+                z-index: 1000;
+            }
+
+            .back-to-top:hover {
+                background: #002244;
+                transform: translateY(-3px);
+                box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            }
+
             /* Header Styles */
             header {
                 background-color: #003366;
                 color: #fff;
                 padding: 1rem 0;
                 margin-bottom: 0;
+                transition: all 0.3s ease;
+            }
+
+            body.scrolled header {
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             }
 
             .header-content {
@@ -394,7 +692,27 @@
                 padding: 1rem 1.5rem;
                 color: #fff;
                 text-decoration: none;
-                transition: background-color 0.3s ease;
+                transition: all 0.3s ease;
+                position: relative;
+                overflow: hidden;
+            }
+
+            nav a::before {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                height: 3px;
+                background-color: #0056b3;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            nav a:hover::before,
+            nav a:focus::before,
+            nav a.active::before {
+                transform: translateX(0);
             }
 
             nav a:hover,
@@ -414,6 +732,8 @@
                 min-width: 200px;
                 box-shadow: 0 2px 5px rgba(0,0,0,0.2);
                 z-index: 1000;
+                opacity: 0;
+                transform: translateY(-10px);
             }
 
             .dropdown:hover .dropdown-content,
@@ -428,6 +748,10 @@
             .dropdown-content a {
                 padding: 0.75rem 1rem;
                 border-bottom: 1px solid #003366;
+            }
+
+            .dropdown-content a::before {
+                display: none;
             }
 
             .dropdown-content a:hover {
@@ -467,6 +791,7 @@
 
             .footer-section a {
                 color: #ccc;
+                transition: color 0.3s ease;
             }
 
             .footer-section a:hover {
@@ -499,6 +824,7 @@
                     display: none;
                     box-shadow: none;
                     background-color: #001122;
+                    transform: none;
                 }
                 
                 .dropdown:hover .dropdown-content,
@@ -509,6 +835,11 @@
                 .footer-content {
                     grid-template-columns: 1fr;
                     gap: 1rem;
+                }
+
+                .back-to-top {
+                    bottom: 1rem;
+                    right: 1rem;
                 }
             }
         `;

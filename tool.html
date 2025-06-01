@@ -15,58 +15,45 @@
   <body>
     <a href="#tool-content" class="skip-link">Skip to assessment tool</a>
     <main id="tool-content" role="main">
-      <div class="tool-container">
+      <div class="tool-container full-screen">
         <h1>Veterans' Preference Interactive Guide</h1>
-        <!-- Critical Disclaimer -->
-        <div class="tool-disclaimer" role="alert">
-          <h2>Important Notice</h2>
-          <p>
-            <strong>This tool provides guidance based on the OPM Vet Guide for HR Professionals. It is for informational purposes only and is NOT an official determination of eligibility or a legal document.</strong>
-          </p>
-          <p>Always refer to official OPM documentation and consult with your agency's HR department or a Veterans Service Officer for definitive determinations.</p>
-          <button id="accept-disclaimer" class="btn btn-primary">I Understand - Continue to Tool</button>
-        </div>
-        <!-- Tool Interface (hidden until disclaimer accepted) -->
-        <div id="tool-interface" class="hidden"> {/* MODIFIED: Added class="hidden", removed inline style */}
-          <!-- Progress Indicator -->
-          <div class="tool-progress" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+        
+        <!-- Tool Interface -->
+        <div id="tool-interface">
+          <!-- Progress Indicator (hidden initially) -->
+          <div class="tool-progress hidden" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
             <div class="progress-bar"></div>
-            <span class="progress-text">Step <span id="current-step">1</span> of <span id="total-steps">10</span>
-            </span>
+            <span class="progress-text">Step <span id="current-step">1</span> of <span id="total-steps">10</span></span>
           </div>
+          
           <!-- Question Area -->
           <div id="question-area" class="tool-question">
-            <!-- Questions dynamically inserted here -->
+            <!-- Initial disclaimer as first question -->
+            <h2>Important Notice</h2>
+            <p><strong>This tool provides guidance based on the OPM Vet Guide for HR Professionals. It is for informational purposes only and is NOT an official determination of eligibility or a legal document.</strong></p>
+            <p>Always refer to official OPM documentation and consult with your agency's HR department or a Veterans Service Officer for definitive determinations.</p>
           </div>
+          
           <!-- Answer Area -->
           <div id="answers-area" class="tool-answers" role="radiogroup">
-            <!-- Answer options dynamically inserted here -->
+            <!-- Initial button to start -->
+            <button id="accept-disclaimer" class="btn btn-primary">I Understand - Continue</button>
           </div>
+          
           <!-- Result Area -->
-          <div id="result-area" class="tool-result hidden"> {/* MODIFIED: Added hidden class, removed inline style */}
+          <div id="result-area" class="tool-result hidden">
             <!-- Results displayed here -->
           </div>
+          
           <!-- Navigation Controls -->
           <div class="tool-controls">
-            <button id="back-button" class="btn btn-secondary hidden">← Previous Question</button> {/* MODIFIED: Added hidden class, removed inline style */}
-            <button id="restart-button" class="btn btn-secondary">Start Over</button>
-            <button id="print-button" class="btn btn-secondary hidden">Print Results</button> {/* MODIFIED: Added hidden class, removed inline style */}
+            <div class="control-group">
+              <button id="back-button" class="btn btn-secondary hidden" aria-label="Go to previous question">← Previous</button>
+              <button id="restart-button" class="btn btn-secondary" aria-label="Start assessment over">Start Over</button>
+            </div>
+            <button id="print-button" class="btn btn-primary hidden" aria-label="Print assessment results">Print Results</button>
           </div>
         </div>
-        <!-- End of Tool Interface -->
-        <!-- Help Section -->
-        <aside class="tool-help">
-          <h3>Need Help?</h3>
-          <ul>
-            <li>
-              <a href="/content/faq.html">Frequently Asked Questions</a>
-            </li>
-            <li>
-              <a href="https://www.opm.gov/policy-data-oversight/veterans-services/vet-guide-for-hr-professionals/" target="_blank" rel="noopener noreferrer">OPM Vet Guide</a>
-            </li>
-            <li>Contact your agency HR or a Veterans Service Officer for personalized assistance</li>
-          </ul>
-        </aside>
       </div>
     </main>
     <script src="script.js"></script>

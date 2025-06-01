@@ -1,47 +1,203 @@
-<header role="banner">
-  <div class="header-content">
-    <h1>Veterans' Preference Guide</h1>
-    <p class="tagline">Your Resource for Federal Employment Benefits</p>
+<header role="banner" class="site-header">
+  <div class="header-container">
+    <div class="header-logo">
+      <svg class="logo-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2L2 7V12C2 16.5 4.23 20.68 8 22.94C9.5 22.97 11 22.13 12 21V21C13 22.13 14.5 22.97 16 22.94C19.77 20.68 22 16.5 22 12V7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="site-title">Veterans' Preference Guide</span>
+    </div>
+    
+    <nav role="navigation" aria-label="Main navigation" class="main-nav">
+      <ul>
+        <li>
+          <a href="/" id="home-link">Home</a>
+        </li>
+        <li class="mega-menu">
+          <a href="#" aria-haspopup="true" aria-expanded="false">Eligibility</a>
+          <div class="mega-menu-content">
+            <div class="mega-menu-group">
+              <h3>Get Started</h3>
+              <ul>
+                <li><a href="/content/eligibility/basic-requirements.html">Basic Requirements</a></li>
+                <li><a href="/content/eligibility/character-of-discharge.html">Character of Discharge</a></li>
+                <li><a href="/content/eligibility/documentation.html">Required Documents</a></li>
+              </ul>
+            </div>
+          </div>
+        </li>
+        <li class="mega-menu">
+          <a href="#" aria-haspopup="true" aria-expanded="false">Preference Types</a>
+          <div class="mega-menu-content">
+            <div class="mega-menu-group">
+              <h3>Preference Categories</h3>
+              <ul>
+                <li><a href="/content/preference-types/5-point.html">5-Point Preference</a></li>
+                <li><a href="/content/preference-types/10-point.html">10-Point Preference</a></li>
+                <li><a href="/content/preference-types/derivative.html">Derivative Preference</a></li>
+              </ul>
+            </div>
+          </div>
+        </li>
+        <li>
+          <a href="/tool.html" id="tool-link">Interactive Guide</a>
+        </li>
+        <li>
+          <a href="/content/faq.html" id="faq-link">FAQ</a>
+        </li>
+      </ul>
+    </nav>
+    
+    <button class="search-button" aria-label="Search" type="button">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M9 17C13.4183 17 17 13.4183 17 9C17 4.58172 13.4183 1 9 1C4.58172 1 1 4.58172 1 9C1 13.4183 4.58172 17 9 17Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M19 19L14.65 14.65" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
   </div>
-  <nav role="navigation" aria-label="Main navigation">
-    <ul>
-      <li>
-        <a href="/" id="home-link">Home</a>
-      </li>
-      <li class="dropdown">
-        <a href="#" aria-haspopup="true" aria-expanded="false">Eligibility</a>
-        <ul class="dropdown-content">
-          <li>
-            <a href="/content/eligibility/basic-requirements.html">Basic Requirements</a>
-          </li>
-          <li>
-            <a href="/content/eligibility/character-of-discharge.html">Character of Discharge</a>
-          </li>
-          <li>
-            <a href="/content/eligibility/documentation.html">Required Documents</a>
-          </li>
-        </ul>
-      </li>
-      <li class="dropdown">
-        <a href="#" aria-haspopup="true" aria-expanded="false">Preference Types</a>
-        <ul class="dropdown-content">
-          <li>
-            <a href="/content/preference-types/5-point.html">5-Point Preference</a>
-          </li>
-          <li>
-            <a href="/content/preference-types/10-point.html">10-Point Preference</a>
-          </li>
-          <li>
-            <a href="/content/preference-types/derivative.html">Derivative Preference</a>
-          </li>
-        </ul>
-      </li>
-      <li>
-        <a href="/tool.html" id="tool-link">Interactive Guide</a>
-      </li>
-      <li>
-        <a href="/content/faq.html" id="faq-link">FAQ</a>
-      </li>
-    </ul>
-  </nav>
 </header>
+
+<style>
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.logo-icon {
+  color: #1a5490;
+  flex-shrink: 0;
+}
+
+.site-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.main-nav ul {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 2rem;
+}
+
+.main-nav a {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  padding: 0.5rem 0;
+  transition: color 0.2s;
+}
+
+.main-nav a:hover {
+  color: #1a5490;
+}
+
+.mega-menu {
+  position: relative;
+}
+
+.mega-menu-content {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  min-width: 250px;
+  margin-top: 0.5rem;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s, visibility 0.2s;
+}
+
+.mega-menu:hover .mega-menu-content {
+  opacity: 1;
+  visibility: visible;
+}
+
+.mega-menu-group h3 {
+  font-size: 0.875rem;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 0.75rem 0;
+}
+
+.mega-menu-group ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.mega-menu-group li {
+  margin-bottom: 0.5rem;
+}
+
+.mega-menu-group a {
+  color: #333;
+  text-decoration: none;
+  font-weight: 400;
+  display: block;
+  padding: 0.25rem 0;
+}
+
+.mega-menu-group a:hover {
+  color: #1a5490;
+}
+
+.search-button {
+  background: none;
+  border: none;
+  padding: 0.5rem;
+  cursor: pointer;
+  color: #666;
+  transition: color 0.2s;
+}
+
+.search-button:hover {
+  color: #1a5490;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .header-container {
+    padding: 1rem;
+  }
+  
+  .site-title {
+    font-size: 1.1rem;
+  }
+  
+  .main-nav ul {
+    gap: 1rem;
+  }
+  
+  .main-nav {
+    display: none;
+  }
+}
+</style>
