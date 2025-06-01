@@ -1,0 +1,146 @@
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; /* Modern system font stack */
+    line-height: 1.7; /* Enhanced readability */
+    margin: 0;
+    padding: 0;
+    background-color: #ffffff; /* Light background */
+    color: #333333; /* Dark grey for text for good contrast */
+}
+
+.skip-link {
+    position: absolute;
+    top: -40px; /* Hidden off-screen */
+    left: 0;
+    background: #005ea2; /* OPM Blue - or a similar professional blue */
+    color: white;
+    padding: 8px 12px;
+    z-index: 1000; /* Ensure it's on top */
+    text-decoration: none;
+    border-radius: 0 0 4px 0;
+    transition: top 0.3s ease-in-out;
+}
+
+.skip-link:focus {
+    top: 0; /* Appears on focus */
+}
+
+header {
+    background: #f8f9fa; /* Very light grey or white for a light feel */
+    color: #212529; /* Dark text for header */
+    padding: 1.5rem 1rem;
+    text-align: center;
+    border-bottom: 1px solid #dee2e6; /* Subtle border */
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2rem; /* Slightly reduced for a cleaner look */
+    font-weight: 600; /* Modern semi-bold */
+}
+
+nav ul {
+    padding: 0.5rem 0 0 0;
+    list-style: none;
+    text-align: center;
+}
+
+nav ul li {
+    display: inline;
+    margin: 0 10px; /* Adjust spacing */
+}
+
+nav a {
+    color: #005ea2; /* Professional blue for links */
+    text-decoration: none;
+    font-weight: 500; /* Medium weight */
+    padding: 8px 12px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+}
+
+nav a:hover, nav a:focus {
+    text-decoration: underline;
+    background-color: #e9ecef; /* Subtle hover/focus background */
+    color: #003d73; /* Darker blue on hover/focus */
+}
+
+main {
+    padding: 20px;
+    max-width: 800px; /* Slightly narrower for better line length and readability */
+    margin: 30px auto; /* Center content with more top/bottom margin */
+}
+
+section {
+    margin-bottom: 30px; /* Increased spacing */
+    padding: 20px; /* Adjusted padding */
+    background-color: #ffffff;
+    border: 1px solid #e9ecef; /* Lighter border for sections */
+    border-radius: 6px; /* Softer radius */
+    /* box-shadow: 0 1px 3px rgba(0,0,0,0.05); Subtle shadow for depth */
+}
+
+h2 {
+    color: #005ea2; /* Professional blue for headings */
+    border-bottom: 1px solid #e9ecef; /* Lighter border */
+    padding-bottom: 10px;
+    margin-top: 0;
+    font-size: 1.75rem;
+    font-weight: 600;
+}
+
+footer {
+    text-align: center;
+    padding: 20px;
+    background: #f8f9fa; /* Consistent light background */
+    color: #495057; /* Softer text color for footer */
+    margin-top: 40px;
+    border-top: 1px solid #dee2e6; /* Subtle top border */
+    font-size: 0.9rem;
+}
+
+footer a {
+    color: #005ea2; /* Professional blue for links */
+}
+
+/* Accessibility: Focus indicator for keyboard navigation */
+a:focus, button:focus, input:focus, select:focus {
+    outline: 2px solid #007bff; /* Standard Bootstrap blue, very visible */
+    outline-offset: 1px;
+    box-shadow: 0 0 0 2px rgba(0,123,255,.25); /* Subtle glow */
+}
+
+header nav a:focus, footer a:focus { /* Ensure focus is visible on different backgrounds */
+     outline: 2px solid #005ea2;
+     outline-offset: 1px;
+}
+
+/* Responsive Design - Mobile Adaptation */
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 1.5rem;
+    }
+    
+    nav ul li {
+        display: block;
+        margin: 5px 0;
+    }
+    
+    main {
+        padding: 15px;
+        margin: 15px auto;
+    }
+    
+    section {
+        padding: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    header h1 {
+        font-size: 1.25rem;
+    }
+    
+    h2 {
+        font-size: 1.5rem;
+    }
+}
