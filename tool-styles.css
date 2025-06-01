@@ -24,7 +24,7 @@
 .tool-container {
     max-width: 800px;
     margin: 0 auto;
-    padding: 2rem 1rem;
+    padding: var(--space-4) var(--space-2); /* 2rem -> var(--space-4), 1rem -> var(--space-2) */
 }
 
 /* Disclaimer */
@@ -32,27 +32,27 @@
     background: var(--warning-color); /* Standard light yellow for warning/info */
     border: 2px solid var(--warning-color); /* Matches yellow */
     border-radius: var(--radius-md);
-    padding: 2rem;
-    margin-bottom: 2rem;
+    padding: var(--space-4); /* 2rem -> var(--space-4) */
+    margin-bottom: var(--space-4); /* 2rem -> var(--space-4) */
     text-align: center;
 }
 
 .tool-disclaimer h2 {
     color: var(--warning-text); /* Dark yellow text */
-    margin-bottom: 1rem;
+    margin-bottom: var(--space-2); /* 1rem -> var(--space-2) */
 }
 
 .tool-disclaimer p {
     color: var(--warning-text); /* Dark yellow text */
-    margin-bottom: 1rem;
+    margin-bottom: var(--space-2); /* 1rem -> var(--space-2) */
 }
 
 /* Progress Indicator */
 .tool-progress {
-    margin-bottom: 2rem;
+    margin-bottom: var(--space-4); /* 2rem -> var(--space-4) */
     background: var(--bg-tertiary);
     border-radius: var(--radius-sm);
-    padding: 0.5rem;
+    padding: var(--space-1); /* 0.5rem -> var(--space-1) */
     position: relative;
     overflow: hidden;
 }
@@ -90,50 +90,50 @@
 .progress-text {
     display: block;
     text-align: center;
-    margin-top: 0.5rem;
-    font-size: 0.875rem;
+    margin-top: var(--space-1); /* 0.5rem -> var(--space-1) */
+    font-size: var(--font-size-sm); /* 0.875rem is close to 0.9rem (sm) */
     color: var(--text-secondary);
     font-weight: 500;
 }
 
 /* Question Area */
 .tool-question {
-    margin-bottom: 2rem;
-    padding: 1.5rem;
+    margin-bottom: var(--space-4); /* 2rem -> var(--space-4) */
+    padding: var(--space-3); /* 1.5rem -> var(--space-3) */
     background: var(--bg-secondary);
     border-radius: var(--radius-md);
     position: relative;
 }
 
 .tool-question h2 {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
+    font-size: var(--font-size-lg); /* 1.5rem -> var(--font-size-lg) */
+    margin-bottom: var(--space-2); /* 1rem -> var(--space-2) */
     color: var(--primary-color); /* Uses updated --primary-color */
 }
 
 .tool-question p { /* General paragraphs in question area */
-    margin-bottom: 0.5rem; /* Ensure this doesn't conflict with .help-text margin if p is used for help */
+    margin-bottom: var(--space-1); /* 0.5rem -> var(--space-1) */
     color: var(--text-primary, #333); /* Using text-primary from style.css or a default */
 }
 
 
 .help-text { /* This class is also in style.css, ensure consistency or tool-specific override */
-    font-size: 0.875rem;
+    font-size: var(--font-size-sm); /* 0.875rem is close to 0.9rem (sm) */
     color: var(--text-secondary);
     font-style: italic;
-    margin-bottom: 1rem; /* Added consistent margin */
+    margin-bottom: var(--space-2); /* 1rem -> var(--space-2) */
 }
 
 /* Answer Area */
 .tool-answers {
-    margin-bottom: 2rem;
+    margin-bottom: var(--space-4); /* 2rem -> var(--space-4) */
 }
 
 .answer-option {
     display: block;
     width: 100%;
-    padding: 1rem 1.5rem;
-    margin-bottom: 1rem;
+    padding: var(--space-2) var(--space-3); /* 1rem -> var(--space-2), 1.5rem -> var(--space-3) */
+    margin-bottom: var(--space-2); /* 1rem -> var(--space-2) */
     background: var(--bg-primary);
     border: 2px solid var(--border-color);
     border-radius: var(--radius-md);
@@ -143,7 +143,7 @@
     position: relative;
     overflow: hidden;
     color: var(--text-primary, #333); /* Ensure text color is appropriate */
-    font-size: 1rem; /* Explicit font size */
+    font-size: var(--font-size-base); /* 1rem -> var(--font-size-base) */
 }
 
 .answer-option::before {
@@ -189,10 +189,10 @@
 
 /* Result Area */
 .tool-result {
-    padding: 2rem;
+    padding: var(--space-4); /* 2rem -> var(--space-4) */
     background: var(--bg-secondary); /* Default background for results */
     border-radius: var(--radius-md);
-    margin-bottom: 2rem;
+    margin-bottom: var(--space-4); /* 2rem -> var(--space-4) */
     position: relative;
     overflow: hidden;
     /* Added from style.css for basic structural styles */
@@ -253,33 +253,33 @@
 }
 
 .result-details {
-    margin: 1.5rem 0;
+    margin: var(--space-3) 0; /* 1.5rem -> var(--space-3) */
 }
 
 .result-details h3 {
-    font-size: 1.25rem;
-    margin-bottom: 0.5rem;
+    font-size: var(--font-size-md); /* 1.25rem -> var(--font-size-md) */
+    margin-bottom: var(--space-1); /* 0.5rem -> var(--space-1) */
     color: var(--primary-color); /* Uses updated --primary-color */
 }
 
 .result-documents {
     background: var(--bg-primary);
-    padding: 1rem;
+    padding: var(--space-2); /* 1rem -> var(--space-2) */
     border-radius: var(--radius-sm);
-    margin: 1rem 0;
+    margin: var(--space-2) 0; /* 1rem -> var(--space-2) */
 }
 
 .result-documents ul,
 .result-details ul,
 .result-links ul {
-    margin: 0.5rem 0 0 0;
-    padding-left: 1.5rem;
+    margin: var(--space-1) 0 0 0; /* 0.5rem -> var(--space-1) */
+    padding-left: var(--space-3); /* 1.5rem -> var(--space-3) */
 }
 
 .result-documents li,
 .result-details li,
 .result-links li {
-    margin-bottom: 0.5rem;
+    margin-bottom: var(--space-1); /* 0.5rem -> var(--space-1) */
 }
 
 /* Success Icon Animation */
@@ -365,15 +365,15 @@
 /* Controls */
 .tool-controls {
     display: flex;
-    gap: 1rem; /* Space between buttons / button groups */
+    gap: var(--space-2); /* 1rem -> var(--space-2) */
     justify-content: center; /* Center single button or group */
     flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
-    margin-top: 2rem; /* Space above controls */
+    margin-top: var(--space-4); /* 2rem -> var(--space-4) */
 }
 
 .tool-controls .control-group { /* For grouping back/restart */
     display: flex;
-    gap: 1rem;
+    gap: var(--space-2); /* 1rem -> var(--space-2) */
 }
 
 /* Individual buttons like .btn, .btn-primary, .btn-secondary are styled by style.css */
@@ -381,15 +381,15 @@
 
 /* Help Section */
 .tool-help {
-    margin-top: 3rem;
-    padding: 1.5rem;
+    margin-top: var(--space-6); /* 3rem -> var(--space-6) */
+    padding: var(--space-3); /* 1.5rem -> var(--space-3) */
     background: var(--bg-tertiary);
     border-radius: var(--radius-md);
 }
 
 .tool-help h3 {
-    font-size: 1.125rem;
-    margin-bottom: 1rem;
+    font-size: var(--font-size-md); /* Changed from 1.125rem to var(--font-size-md) (1.25rem) */
+    margin-bottom: var(--space-2); /* 1rem -> var(--space-2) */
     color: var(--text-primary, #333);
 }
 
@@ -399,7 +399,7 @@
 }
 
 .tool-help li {
-    margin-bottom: 0.5rem;
+    margin-bottom: var(--space-1); /* 0.5rem -> var(--space-1) */
 }
 
 .tool-help a { /* Ensure links in help section follow tool's primary color if needed */
@@ -487,25 +487,25 @@ button:not(.btn):focus-visible {
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
     .tool-container {
-        padding: 1rem;
+        padding: var(--space-2); /* 1rem -> var(--space-2) */
     }
     
     .tool-disclaimer {
-        padding: 1rem;
+        padding: var(--space-2); /* 1rem -> var(--space-2) */
     }
     
     .answer-option {
-        padding: 0.75rem 1rem;
-        font-size: 0.9rem;
+        padding: var(--space-1) var(--space-2); /* 0.75rem is between space-1 and space-2, choosing space-1 for vertical, space-2 for horizontal */
+        font-size: var(--font-size-sm); /* 0.9rem -> var(--font-size-sm) */
     }
     
     .tool-question h2 {
-        font-size: 1.25rem;
+        font-size: var(--font-size-md); /* 1.25rem -> var(--font-size-md) */
     }
     
     .success-icon {
-        width: 60px;
-        height: 60px;
+        width: var(--space-6); /* 60px is 3.75rem, closest is space-6 (3rem) or space-8 (4rem). Choosing space-6 for now. */
+        height: var(--space-6); /* 60px is 3.75rem, closest is space-6 (3rem) or space-8 (4rem). Choosing space-6 for now. */
     }
 
     .tool-controls {
@@ -518,7 +518,7 @@ button:not(.btn):focus-visible {
     }
     .tool-controls button, .tool-controls .btn {
         width: 100%; /* Make all buttons full width */
-        margin-bottom: 0.5rem; /* Add some space between stacked buttons */
+        margin-bottom: var(--space-1); /* 0.5rem -> var(--space-1) */
     }
     .tool-controls button:last-child, .tool-controls .btn:last-child {
         margin-bottom: 0;
