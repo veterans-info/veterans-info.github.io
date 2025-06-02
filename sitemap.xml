@@ -12,5 +12,53 @@
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
     </url>
+    <url>
+        <loc>https://veterans-info.github.io/content/basic-eligibility-requirements.html</loc>
+        <lastmod>2025-06-01</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://veterans-info.github.io/content/five-point-preference.html</loc>
+        <lastmod>2025-06-01</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://veterans-info.github.io/content/ten-point-preference.html</loc>
+        <lastmod>2025-06-01</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://veterans-info.github.io/content/derivative-preference.html</loc>
+        <lastmod>2025-06-01</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://veterans-info.github.io/content/veterans-preference-in-rif.html</loc>
+        <lastmod>2025-06-01</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://veterans-info.github.io/content/special-appointing-authorities.html</loc>
+        <lastmod>2025-06-01</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://veterans-info.github.io/content/filing-complaints.html</loc>
+        <lastmod>2025-06-01</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://veterans-info.github.io/content/documentation-requirements.html</loc>
+        <lastmod>2025-06-01</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
     <!-- More pages will be added here as they are created -->
 </urlset>
