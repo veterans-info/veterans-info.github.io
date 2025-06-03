@@ -1,4 +1,4 @@
-# DEPRECATED: USE THIS INSTEAD: https://github.com/hadcomfort/veterans.github.io
+## DEPRECATED: USE THIS INSTEAD: https://github.com/hadcomfort/veterans.github.io
 
 # 🇺🇸 Veterans' Preference Guide
 
