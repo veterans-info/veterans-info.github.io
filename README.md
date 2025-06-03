@@ -1,3 +1,5 @@
+# DEPRECATED: USE THIS INSTEAD: https://github.com/hadcomfort/veterans.github.io
+
 # 🇺🇸 Veterans' Preference Guide
 
 **Your Trusted Unofficial Resource for Navigating Federal Employment Benefits**
