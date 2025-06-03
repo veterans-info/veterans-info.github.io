@@ -1,0 +1,31 @@
+title: Veterans Preference Interactive Guide
+description: An interactive guide to understanding Veterans' Preference in federal hiring.
+theme: jekyll-theme-minimal
+
+# Site URL and Base URL
+url: "https://hadcomfort.github.io/veterans.github.io"
+baseurl: "" # No additional path since the site is hosted at the root of this repository
+
+# Optional: Add default front matter for pages/collections
+defaults:
+  - scope:
+      path: ""
+      type: "pages" # Applies to all .md files that are not posts or in collections
+    values:
+      layout: "page"
+  - scope:
+      path: ""
+      type: "appendices" # Assuming 'appendices' is a custom collection
+    values:
+      layout: "collection_item"
+
+# Collections setup
+collections:
+  appendices:
+    output: true
+    permalink: /appendices/:name/
+
+# Plugins (if needed)
+plugins:
+  - jekyll-sitemap
+  - jekyll-seo-tag
