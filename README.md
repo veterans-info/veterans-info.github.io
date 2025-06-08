@@ -1,6 +1,8 @@
 Deprecated: New project: https://github.com/hadcomfort/hadcomfort.github.io
 
 ---
+---
+---
 
 # 🇺🇸 Veterans' Preference Guide
 
