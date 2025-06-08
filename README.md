@@ -1,3 +1,7 @@
+Deprecated: New project: https://github.com/hadcomfort/hadcomfort.github.io
+
+---
+
 # 🇺🇸 Veterans' Preference Guide
 
 **Your Trusted Unofficial Resource for Navigating Federal Employment Benefits**
